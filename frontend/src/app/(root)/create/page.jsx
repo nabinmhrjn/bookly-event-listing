@@ -30,6 +30,8 @@ import {
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
+import api from "@/lib/axios";
+import { toast } from "sonner"
 
 const formSchema = z.object({
     eventName: z.string().min(1, "Event name is required.").min(2, {
@@ -81,6 +83,7 @@ const CreateEvent = () => {
     const [endOpen, setEndOpen] = useState(false);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const [loading, setLoading] = useState(false)
 
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -97,8 +100,31 @@ const CreateEvent = () => {
         },
     });
 
-    function onSubmit(values) {
-        console.log(values);
+    const handleSubmit = async (values) => {
+        setLoading(true);
+        try {
+            const response = await api.post("/events", values);
+
+            console.log("Event created successfully:", response.data);
+
+            // Reset form
+            form.reset();
+            setStartDate(null);
+            setEndDate(null);
+
+            // Optional: Add success notification
+            toast.success("Event created successfully!");
+
+            // Optional: Redirect to events list or event detail page
+            // router.push(`/events/${response.data.event._id}`);
+        } catch (error) {
+            console.error("Error creating event:", error);
+            // Show user-friendly error message
+            const errorMessage = error.response?.data?.message || "Failed to create event. Please try again.";
+            toast.error(errorMessage);
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -113,7 +139,7 @@ const CreateEvent = () => {
 
                 {/* FORM */}
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                         {/* EVENT DETAILS */}
                         <div className="w-full mx-auto bg-white p-4">
                             <p className="text-xl font-bold pb-2">Event Details</p>
@@ -138,6 +164,7 @@ const CreateEvent = () => {
                                         </FormItem>
                                     )}
                                 />
+
                                 <FormField
                                     control={form.control}
                                     name="eventDescription"
@@ -157,6 +184,7 @@ const CreateEvent = () => {
                                         </FormItem>
                                     )}
                                 />
+
                                 <div className="mt-4 flex justify-between items-center">
                                     {/* <FormField
                                         control={form.control}
@@ -192,9 +220,9 @@ const CreateEvent = () => {
                                                             <SelectValue placeholder="Select Event Category" {...field} />
                                                         </SelectTrigger>
                                                         <SelectContent>
-                                                            <SelectItem value="Concerts">Concerts</SelectItem>
-                                                            <SelectItem value="Comedy Show">Comedy Show</SelectItem>
-                                                            <SelectItem value="Book Launch">Book Launch</SelectItem>
+                                                            <SelectItem value="Live Concert">Live Concerts</SelectItem>
+                                                            <SelectItem value="Technology & Innovation">Technology & Innovation</SelectItem>
+                                                            <SelectItem value="Business & Networking">Business & Networking</SelectItem>
                                                         </SelectContent>
                                                     </Select>
                                                 </FormControl>
