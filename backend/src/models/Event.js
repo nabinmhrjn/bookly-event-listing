@@ -9,6 +9,42 @@ const eventSchema = new mongoose.Schema(
         eventDescription: {
             type: String,
             required: true
+        },
+        eventCategory: {
+            type: String,
+            required: true,
+            enum: [
+                "Live Concert",
+                "Comedy Show",
+                "Sports Event",
+                "Technology & Innovation",
+                "Business & Networking",
+                "Other"
+            ]
+        },
+        eventVenue: {
+            type: String,
+            required: true
+        },
+        eventAddress: {
+            type: String,
+            required: true
+        },
+        startDate: {
+            type: Date,
+            required: true
+        },
+        endDate: {
+            type: Date,
+            required: true
+        },
+        startTime: {
+            type: String, // Keep as String for HH:MM format
+            required: true
+        },
+        endTime: {
+            type: String, // Keep as String for HH:MM format
+            required: true
         }
     },
     { timestamps: true }
