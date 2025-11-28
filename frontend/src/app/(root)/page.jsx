@@ -6,7 +6,7 @@ const Homepage = () => {
   return (
     <div>
       <Hero />
-      <EventCard title="Upcoming Events You Can't Miss" limit={3} />
+      {/* <EventCard title="Upcoming Events You Can't Miss" limit={3} /> */}
       <EasySteps />
     </div>
   )

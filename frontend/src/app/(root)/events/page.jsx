@@ -5,18 +5,34 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ChevronDownIcon, Search } from "lucide-react";
-import { useState } from "react";
+import api from "@/lib/axios";
+import { ChevronDownIcon } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const EventPage = () => {
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState(new Date());
+    const [loading, setLoading] = useState(false);
+    const [eventList, setEventList] = useState([]);
+
+    const fetchEvents = async () => {
+        setLoading(true)
+        try {
+            const { data } = await api.get("/events");
+            setEventList(data)
+        } catch (error) {
+            console.error("Error fetching events:", error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchEvents()
+    }, [])
 
     return (
         <div className="max-w-7xl mx-auto flex gap-4">
@@ -93,7 +109,15 @@ const EventPage = () => {
 
             {/* RIGHT SECTION */}
             <div className="w-[80%]">
-                <EventCard />
+                <div className="grid grid-cols-3 gap-4 pb-20">
+                    {eventList.map((item) => (
+                        <Link href={`/events/${item._id}`} key={item._id}>
+                            <EventCard item={item} />
+                        </Link>
+
+                    ))}
+                </div>
+
             </div>
         </div>
     );
