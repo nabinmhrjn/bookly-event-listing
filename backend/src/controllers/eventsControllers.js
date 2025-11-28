@@ -38,8 +38,27 @@ export async function createEvent(req, res) {
 
 export async function getAllEvents(req, res) {
     try {
-        const events = await Event.find().sort({ createdAt: -1 });
-        res.status(200).json(events);
+        const { page = 1 } = req.query;
+        const limit = 6;
+        const skip = (parseInt(page) - 1) * limit;
+
+        //get total count
+        const totalEvents = await Event.countDocuments();
+        const totalPages = Math.ceil(totalEvents / limit);
+
+        //fetch paginated events
+        const events = await Event.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+        res.status(200).json({
+            events,
+            pagination: {
+                currentPage: parseInt(page),
+                totalPages,
+                totalEvents,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1
+            }
+        });
+
     } catch (error) {
         console.error("Error in getAllEvents controller", error);
         res.status(500).json({ message: "Internal server error" });
