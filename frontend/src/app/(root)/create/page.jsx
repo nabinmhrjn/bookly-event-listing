@@ -220,9 +220,9 @@ const CreateEvent = () => {
                                                             <SelectValue placeholder="Select Event Category" {...field} />
                                                         </SelectTrigger>
                                                         <SelectContent>
-                                                            <SelectItem value="Live Concert">Live Concerts</SelectItem>
-                                                            <SelectItem value="Technology & Innovation">Technology & Innovation</SelectItem>
-                                                            <SelectItem value="Business & Networking">Business & Networking</SelectItem>
+                                                            <SelectItem value="live-concert">Live Concerts</SelectItem>
+                                                            <SelectItem value="technology-innovation">Technology & Innovation</SelectItem>
+                                                            <SelectItem value="business-marketing">Business & Networking</SelectItem>
                                                         </SelectContent>
                                                     </Select>
                                                 </FormControl>

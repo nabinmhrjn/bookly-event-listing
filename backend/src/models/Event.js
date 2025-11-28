@@ -14,12 +14,12 @@ const eventSchema = new mongoose.Schema(
             type: String,
             required: true,
             enum: [
-                "Live Concert",
-                "Comedy Show",
-                "Sports Event",
-                "Technology & Innovation",
-                "Business & Networking",
-                "Other"
+                "live-concert",
+                "comedy-show",
+                "sports-event",
+                "technology-innovation",
+                "business-marketing",
+                "other"
             ]
         },
         eventVenue: {

@@ -26,11 +26,13 @@ const EventPage = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get('page')) || 1;
+    const categoryFromUrl = searchParams.get('category') || '';
 
     const [open, setOpen] = useState(false);
     const [date, setDate] = useState(new Date());
     const [loading, setLoading] = useState(false);
     const [eventList, setEventList] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl)
     const [pagination, setPagination] = useState({
         currentPage: 1,
         totalPages: 1,
@@ -39,10 +41,16 @@ const EventPage = () => {
         hasPreviousPage: false
     });
 
-    const fetchEvents = async (pageNum) => {
+    const fetchEvents = async (pageNum, category = '') => {
         setLoading(true);
         try {
-            const response = await api.get(`/events?page=${pageNum}`);
+            //build query params
+            let queryParams = `page=${pageNum}`;
+            if (category) {
+                queryParams += `&category=${encodeURIComponent(category)}`
+            }
+
+            const response = await api.get(`/events?${queryParams}`);
             setEventList(response?.data?.events);
             setPagination(response?.data?.pagination);
         } catch (error) {
@@ -53,13 +61,42 @@ const EventPage = () => {
     };
 
     useEffect(() => {
-        fetchEvents(currentPage);
-    }, [currentPage]);
+        fetchEvents(currentPage, categoryFromUrl);
+    }, [currentPage, categoryFromUrl]);
+
+    const handleCategoryChange = (category) => {
+        setSelectedCategory(category)
+
+        //update url with category and reset to page 1
+        const params = new URLSearchParams();
+        params.set('page', '1');
+        if (category) {
+            params.set('category', category);
+        }
+
+        router.push(`/events?${params.toString()}`);
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
 
     const handlePageChange = (newPage) => {
-        router.push(`/events?page=${newPage}`);
+        const params = new URLSearchParams();
+        params.set('page', newPage.toString());
+
+        if (selectedCategory) {
+            params.set('category', selectedCategory)
+        }
+
+        router.push(`/events?${params.toString()}`);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
+
+    const handleClearFilters = () => {
+        setSelectedCategory('');
+        router.push('/events?page=1')
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
 
     // generate page numbers to display
     const getPageNumbers = () => {
@@ -96,131 +133,151 @@ const EventPage = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto flex gap-4">
-            {/* LEFT SECTION */}
-            <div className="w-[20%] p-4">
-                <p className="text-lg">Filters</p>
+        <div className="bg-primary/5 py-5">
 
-                {/* RADIO GROUP */}
-                <div className="">
-                    <RadioGroup defaultValue="option-one">
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="concerts" id="concerts" />
-                            <Label htmlFor="concerts">Concerts</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="sports" id="sports" />
-                            <Label htmlFor="sports">Sports</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="theatre" id="theatre" />
-                            <Label htmlFor="theatre">Theatre</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="festivals" id="festivals" />
-                            <Label htmlFor="festivals">Festivals</Label>
-                        </div>
-                    </RadioGroup>
+            <div className="max-w-7xl mx-auto">
+                <div className="pb-2">
+                    <p className=" text-lg font-bold">Filters</p>
                 </div>
+                <div className="flex gap-4">
+                    {/* LEFT SECTION */}
+                    <div className="w-[20%] p-4 bg-white h-[480px]">
+                        <p className="font-bold">Category</p>
 
-                {/* DATE PICKER | CALENDAR */}
-                <div className="mt-8 space-y-2">
-                    <Label htmlFor="date" className="px-1">
-                        Date Range
-                    </Label>
-                    <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant="outline"
-                                id="date"
-                                className="w-48 justify-between font-normal"
-                            >
-                                {date ? date.toLocaleDateString() : "Select date"}
-                                <ChevronDownIcon />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent
-                            className="w-auto overflow-hidden p-0"
-                            align="start"
-                        >
-                            <Calendar
-                                mode="single"
-                                selected={date}
-                                captionLayout="dropdown"
-                                onSelect={(date) => {
-                                    setDate(date);
-                                    setOpen(false);
-                                }}
-                            />
-                        </PopoverContent>
-                    </Popover>
-                </div>
+                        {/* RADIO GROUP */}
+                        <div className="pt-4">
+                            <RadioGroup value={selectedCategory} onValueChange={handleCategoryChange}>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="live-concert" id="Live Concert" />
+                                    <Label htmlFor="Live Concert">Live Concert</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="comedy-show" id="Comedy Show" />
+                                    <Label htmlFor="sports">Comedy Show</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="sports-event" id="Sports Event" />
+                                    <Label htmlFor="Sports Event">Sports Event</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="technology-innovation" id="Technology & Innovation" />
+                                    <Label htmlFor="Technology & Innovation">Technology & Innovation</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="business-marketing" id="Business & Marketing" />
+                                    <Label htmlFor="Business & Marketing">Business & Marketing</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="other" id="Other" />
+                                    <Label htmlFor="Other">Other</Label>
+                                </div>
+                            </RadioGroup>
+                        </div>
 
-                {/* LOCATION */}
-                <div className="mt-8 space-y-2">
-                    <Label htmlFor="date" className="px-1">
-                        Location
-                    </Label>
-                    <div className="flex border items-center">
-                        <Input placeholder="Enter a city" className="border-none" />
+                        {/* DATE PICKER | CALENDAR */}
+                        <div className="mt-8 space-y-2">
+                            <Label htmlFor="date" className="px-1 font-bold">
+                                Date Range
+                            </Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        id="date"
+                                        className="w-full justify-between font-normal"
+                                    >
+                                        {date ? date.toLocaleDateString() : "Select date"}
+                                        <ChevronDownIcon />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                    className="w-full overflow-hidden p-0"
+                                    align="start"
+                                >
+                                    <Calendar
+                                        mode="single"
+                                        selected={date}
+                                        captionLayout="dropdown"
+                                        onSelect={(date) => {
+                                            setDate(date);
+                                            setOpen(false);
+                                        }}
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+
+                        {/* LOCATION */}
+                        <div className="mt-8 space-y-2">
+                            <Label htmlFor="date" className="px-1 font-bold">
+                                Location
+                            </Label>
+                            <div className="flex border items-center">
+                                <Input placeholder="Enter a city" className="border-none" />
+                            </div>
+                        </div>
+
+                        <div className="mt-8">
+                            <Button className="w-full" onClick={handleClearFilters}>Clear Filters</Button>
+                        </div>
+                    </div>
+
+                    {/* RIGHT SECTION */}
+                    <div className="w-[80%]">
+                        {loading ? (
+                            <div className="text-center py-10">Loading events...</div>
+                        ) : (
+                            <>
+                                <div className="grid grid-cols-3 gap-4">
+                                    {eventList.map((item) => (
+                                        <Link href={`/events/${item._id}`} key={item._id}>
+                                            <EventCard item={item} />
+                                        </Link>
+                                    ))}
+                                </div>
+
+                                {/* Pagination */}
+                                {pagination.totalPages > 1 && (
+                                    <div className="mt-8">
+                                        <Pagination>
+                                            <PaginationContent>
+                                                <PaginationItem>
+                                                    <PaginationPrevious
+                                                        onClick={() => pagination.hasPreviousPage && handlePageChange(currentPage - 1)}
+                                                        className={!pagination.hasPreviousPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                                                    />
+                                                </PaginationItem>
+
+                                                {getPageNumbers().map((pageNum, index) => (
+                                                    <PaginationItem key={index}>
+                                                        {pageNum === 'ellipsis-start' || pageNum === 'ellipsis-end' ? (
+                                                            <PaginationEllipsis />
+                                                        ) : (
+                                                            <PaginationLink
+                                                                onClick={() => handlePageChange(pageNum)}
+                                                                isActive={pageNum === pagination.currentPage}
+                                                                className="cursor-pointer"
+                                                            >
+                                                                {pageNum}
+                                                            </PaginationLink>
+                                                        )}
+                                                    </PaginationItem>
+                                                ))}
+
+                                                <PaginationItem>
+                                                    <PaginationNext
+                                                        onClick={() => pagination.hasNextPage && handlePageChange(currentPage + 1)}
+                                                        className={!pagination.hasNextPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                                                    />
+                                                </PaginationItem>
+                                            </PaginationContent>
+                                        </Pagination>
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
                 </div>
-            </div>
-
-            {/* RIGHT SECTION */}
-            <div className="w-[80%]">
-                {loading ? (
-                    <div className="text-center py-10">Loading events...</div>
-                ) : (
-                    <>
-                        <div className="grid grid-cols-3 gap-4">
-                            {eventList.map((item) => (
-                                <Link href={`/events/${item._id}`} key={item._id}>
-                                    <EventCard item={item} />
-                                </Link>
-                            ))}
-                        </div>
-
-                        {/* Pagination */}
-                        {pagination.totalPages > 1 && (
-                            <div className="mt-8">
-                                <Pagination>
-                                    <PaginationContent>
-                                        <PaginationItem>
-                                            <PaginationPrevious
-                                                onClick={() => pagination.hasPreviousPage && handlePageChange(currentPage - 1)}
-                                                className={!pagination.hasPreviousPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                                            />
-                                        </PaginationItem>
-
-                                        {getPageNumbers().map((pageNum, index) => (
-                                            <PaginationItem key={index}>
-                                                {pageNum === 'ellipsis-start' || pageNum === 'ellipsis-end' ? (
-                                                    <PaginationEllipsis />
-                                                ) : (
-                                                    <PaginationLink
-                                                        onClick={() => handlePageChange(pageNum)}
-                                                        isActive={pageNum === pagination.currentPage}
-                                                        className="cursor-pointer"
-                                                    >
-                                                        {pageNum}
-                                                    </PaginationLink>
-                                                )}
-                                            </PaginationItem>
-                                        ))}
-
-                                        <PaginationItem>
-                                            <PaginationNext
-                                                onClick={() => pagination.hasNextPage && handlePageChange(currentPage + 1)}
-                                                className={!pagination.hasNextPage ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                                            />
-                                        </PaginationItem>
-                                    </PaginationContent>
-                                </Pagination>
-                            </div>
-                        )}
-                    </>
-                )}
             </div>
         </div>
     );

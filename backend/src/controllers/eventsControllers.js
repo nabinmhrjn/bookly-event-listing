@@ -38,16 +38,24 @@ export async function createEvent(req, res) {
 
 export async function getAllEvents(req, res) {
     try {
-        const { page = 1 } = req.query;
+        const { page = 1, category } = req.query;
         const limit = 6;
         const skip = (parseInt(page) - 1) * limit;
+
+        //build filter object
+        const filter = {};
+
+        //add category filter if provided
+        if (category && category !== 'all') {
+            filter.eventCategory = category
+        }
 
         //get total count
         const totalEvents = await Event.countDocuments();
         const totalPages = Math.ceil(totalEvents / limit);
 
         //fetch paginated events
-        const events = await Event.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+        const events = await Event.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
         res.status(200).json({
             events,
             pagination: {
@@ -56,6 +64,9 @@ export async function getAllEvents(req, res) {
                 totalEvents,
                 hasNextPage: page < totalPages,
                 hasPreviousPage: page > 1
+            },
+            filters: {
+                category: category || 'all',
             }
         });
 

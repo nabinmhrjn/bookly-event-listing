@@ -5,7 +5,7 @@ import { Button } from "./ui/button"
 const EventCard = ({ item }) => {
     return (
         <Card>
-            <Image src="/test.jpeg" width={500} height={500} alt="Picture of the author" />
+            <Image src="/test.jpeg" width={500} height={500} alt="Picture of the author" loading="eager" />
             <CardHeader>
                 <CardTitle className="min-h-10 leading-5">{item.eventName}</CardTitle>
                 <CardDescription className="line-clamp-3">{item.eventDescription}</CardDescription>

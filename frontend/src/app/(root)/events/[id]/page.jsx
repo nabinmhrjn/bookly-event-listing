@@ -44,8 +44,8 @@ const EventDetailPage = () => {
                     <div className="relative w-full h-[600px]">
                         <Image
                             src="/test.jpeg"
-                            width={500}
-                            height={500}
+                            width={2000}
+                            height={2000}
                             alt="Picture of the author"
                             className="absolute w-full h-full object-cover"
                         />
