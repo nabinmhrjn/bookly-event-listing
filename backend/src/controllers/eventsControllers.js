@@ -50,8 +50,8 @@ export async function getAllEvents(req, res) {
             filter.eventCategory = category
         }
 
-        //get total count
-        const totalEvents = await Event.countDocuments();
+        //get total count for filtered events
+        const totalEvents = await Event.countDocuments(filter);
         const totalPages = Math.ceil(totalEvents / limit);
 
         //fetch paginated events

@@ -287,6 +287,9 @@ const CreateEvent = () => {
                                                             <SelectItem value="live-concert">Live Concerts</SelectItem>
                                                             <SelectItem value="technology-innovation">Technology & Innovation</SelectItem>
                                                             <SelectItem value="business-marketing">Business & Networking</SelectItem>
+                                                            <SelectItem value="sports-event">Sports Events</SelectItem>
+                                                            <SelectItem value="comedy-show">Comedy Shows</SelectItem>
+                                                            <SelectItem value="other">Other</SelectItem>
                                                         </SelectContent>
                                                     </Select>
                                                 </FormControl>

@@ -137,7 +137,7 @@ const EventPage = () => {
                 </div>
                 <div className="flex gap-4">
                     {/* LEFT SECTION */}
-                    <div className="w-[20%] p-4 bg-white h-[580px]">
+                    <div className="w-[20%] p-4 bg-white h-[430px]">
                         <p className="font-bold">Category</p>
 
                         {/* RADIO GROUP */}
@@ -178,9 +178,10 @@ const EventPage = () => {
                             <div className="flex gap-2 flex-wrap">
                                 <Button variant="outline" className="text-xs">Today</Button>
                                 <Button variant="outline" className="text-xs">Tomorrow</Button>
-                                <Button variant="outline" className="text-xs">This Week</Button>
+                                <Button variant="outline" className="text-xs">This Weekend</Button>
                             </div>
-                            <Popover open={open} onOpenChange={setOpen}>
+
+                            {/* <Popover open={open} onOpenChange={setOpen}> 
                                 <PopoverTrigger asChild>
                                     <Button
                                         variant="outline"
@@ -205,18 +206,18 @@ const EventPage = () => {
                                         }}
                                     />
                                 </PopoverContent>
-                            </Popover>
+                            </Popover> */}
                         </div>
 
                         {/* LOCATION */}
-                        <div className="mt-8 space-y-2">
+                        {/* <div className="mt-8 space-y-2">
                             <Label htmlFor="date" className="px-1 font-bold">
                                 Location
                             </Label>
                             <div className="flex border items-center">
                                 <Input placeholder="Enter a city" className="border-none" />
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="mt-8">
                             <Button className="w-full" onClick={handleClearFilters}>Clear Filters</Button>
