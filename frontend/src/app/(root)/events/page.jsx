@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import api from "@/lib/axios";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, LoaderIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -27,9 +27,8 @@ const EventPage = () => {
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get('page')) || 1;
     const categoryFromUrl = searchParams.get('category') || '';
-
     const [open, setOpen] = useState(false);
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(null);
     const [loading, setLoading] = useState(false);
     const [eventList, setEventList] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl)
@@ -78,7 +77,6 @@ const EventPage = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
-
     const handlePageChange = (newPage) => {
         const params = new URLSearchParams();
         params.set('page', newPage.toString());
@@ -93,10 +91,9 @@ const EventPage = () => {
 
     const handleClearFilters = () => {
         setSelectedCategory('');
-        router.push('/events?page=1')
+        router.push('/events')
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
-
 
     // generate page numbers to display
     const getPageNumbers = () => {
@@ -134,14 +131,13 @@ const EventPage = () => {
 
     return (
         <div className="bg-primary/5 py-5">
-
             <div className="max-w-7xl mx-auto">
                 <div className="pb-2">
                     <p className=" text-lg font-bold">Filters</p>
                 </div>
                 <div className="flex gap-4">
                     {/* LEFT SECTION */}
-                    <div className="w-[20%] p-4 bg-white h-[480px]">
+                    <div className="w-[20%] p-4 bg-white h-[580px]">
                         <p className="font-bold">Category</p>
 
                         {/* RADIO GROUP */}
@@ -179,6 +175,11 @@ const EventPage = () => {
                             <Label htmlFor="date" className="px-1 font-bold">
                                 Date Range
                             </Label>
+                            <div className="flex gap-2 flex-wrap">
+                                <Button variant="outline" className="text-xs">Today</Button>
+                                <Button variant="outline" className="text-xs">Tomorrow</Button>
+                                <Button variant="outline" className="text-xs">This Week</Button>
+                            </div>
                             <Popover open={open} onOpenChange={setOpen}>
                                 <PopoverTrigger asChild>
                                     <Button
@@ -225,7 +226,9 @@ const EventPage = () => {
                     {/* RIGHT SECTION */}
                     <div className="w-[80%]">
                         {loading ? (
-                            <div className="text-center py-10">Loading events...</div>
+                            <div className="min-h-screen bg-base-200 flex items-center justify-center">
+                                <LoaderIcon className="animate-spin size-10" />
+                            </div>
                         ) : (
                             <>
                                 <div className="grid grid-cols-3 gap-4">

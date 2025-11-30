@@ -83,7 +83,15 @@ const CreateEvent = () => {
     const [endOpen, setEndOpen] = useState(false);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+
+    // Time component states
+    const [startHour, setStartHour] = useState("");
+    const [startMinute, setStartMinute] = useState("");
+    const [startPeriod, setStartPeriod] = useState("");
+    const [endHour, setEndHour] = useState("");
+    const [endMinute, setEndMinute] = useState("");
+    const [endPeriod, setEndPeriod] = useState("");
 
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -126,6 +134,62 @@ const CreateEvent = () => {
             setLoading(false);
         }
     }
+
+    // Helper to format date
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    // Helper to parse date string
+    const parseDate = (dateString) => {
+        if (!dateString) return undefined;
+        const [year, month, day] = dateString.split('-').map(Number);
+        return new Date(year, month - 1, day);
+    };
+
+    // Convert 12-hour time to 24-hour format
+    const convertTo24Hour = (hour, minute, period) => {
+        if (!hour || !minute || !period) return "";
+        let hour24 = parseInt(hour);
+        if (period === "PM" && hour24 !== 12) {
+            hour24 += 12;
+        } else if (period === "AM" && hour24 === 12) {
+            hour24 = 0;
+        }
+        return `${String(hour24).padStart(2, '0')}:${minute}:00`;
+    };
+
+    // Convert 24-hour time to 12-hour format
+    const convertTo12Hour = (time24) => {
+        if (!time24) return { hour: "", minute: "", period: "" };
+        const [hour24, minute] = time24.split(':');
+        let hour = parseInt(hour24);
+        const period = hour >= 12 ? "PM" : "AM";
+        if (hour === 0) {
+            hour = 12;
+        } else if (hour > 12) {
+            hour -= 12;
+        }
+        return { hour: String(hour), minute, period };
+    };
+
+    // Update form when time components change
+    const updateStartTime = (hour, minute, period) => {
+        const time24 = convertTo24Hour(hour, minute, period);
+        if (time24) {
+            form.setValue("startTime", time24);
+        }
+    };
+
+    const updateEndTime = (hour, minute, period) => {
+        const time24 = convertTo24Hour(hour, minute, period);
+        if (time24) {
+            form.setValue("endTime", time24);
+        }
+    };
 
     return (
         <div className="bg-primary/5 pt-14 pb-16">
@@ -262,7 +326,7 @@ const CreateEvent = () => {
                                                                     <Button
                                                                         variant="outline"
                                                                         id="date-picker"
-                                                                        className="w-80 justify-between font-normal"
+                                                                        className="font-normal"
                                                                     >
                                                                         {field.value
                                                                             ? new Date(field.value + 'T00:00:00').toLocaleDateString()
@@ -276,19 +340,17 @@ const CreateEvent = () => {
                                                                 >
                                                                     <Calendar
                                                                         mode="single"
-                                                                        selected={field.value ? new Date(field.value + 'T00:00:00') : undefined}
+                                                                        selected={field.value ? parseDate(field.value) : undefined}
                                                                         captionLayout="dropdown"
                                                                         disabled={(date) => {
                                                                             const today = new Date();
                                                                             today.setHours(0, 0, 0, 0);
-                                                                            // Only disable past dates, allow today
                                                                             return date < today;
                                                                         }}
                                                                         onSelect={(date) => {
                                                                             if (date) {
                                                                                 setStartDate(date);
-                                                                                // Format date as YYYY-MM-DD for form value
-                                                                                const formattedDate = date.toISOString().split('T')[0];
+                                                                                const formattedDate = formatDate(date);
                                                                                 field.onChange(formattedDate);
                                                                                 setStartOpen(false);
                                                                             }
@@ -297,20 +359,65 @@ const CreateEvent = () => {
                                                                 </PopoverContent>
                                                             </Popover>
                                                         </div>
-                                                        <div className="flex flex-col gap-3">
-                                                            <FormField
-                                                                control={form.control}
-                                                                name="startTime"
-                                                                render={({ field: timeField }) => (
-                                                                    <Input
-                                                                        type="time"
-                                                                        id="time-picker"
-                                                                        step="1"
-                                                                        {...timeField}
-                                                                        className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                                                                    />
-                                                                )}
-                                                            />
+                                                        <div className="flex gap-2">
+                                                            {/* Hour Select */}
+                                                            <Select
+                                                                value={startHour}
+                                                                onValueChange={(value) => {
+                                                                    setStartHour(value);
+                                                                    updateStartTime(value, startMinute, startPeriod);
+                                                                }}
+                                                            >
+                                                                <SelectTrigger className="w-20">
+                                                                    <SelectValue placeholder="HH" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
+                                                                        <SelectItem key={hour} value={String(hour)}>
+                                                                            {String(hour).padStart(2, '0')}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+
+                                                            <span className="flex items-center">:</span>
+
+                                                            {/* Minute Select */}
+                                                            <Select
+                                                                value={startMinute}
+                                                                onValueChange={(value) => {
+                                                                    setStartMinute(value);
+                                                                    updateStartTime(startHour, value, startPeriod);
+                                                                }}
+                                                            >
+                                                                <SelectTrigger className="w-20">
+                                                                    <SelectValue placeholder="MM" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
+                                                                        <SelectItem key={minute} value={String(minute).padStart(2, '0')}>
+                                                                            {String(minute).padStart(2, '0')}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+
+                                                            {/* AM/PM Select */}
+                                                            <Select
+                                                                value={startPeriod}
+                                                                onValueChange={(value) => {
+                                                                    setStartPeriod(value);
+                                                                    updateStartTime(startHour, startMinute, value);
+                                                                }}
+                                                            >
+                                                                <SelectTrigger className="w-20">
+                                                                    <SelectValue placeholder="AM" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="AM">AM</SelectItem>
+                                                                    <SelectItem value="PM">PM</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
                                                         </div>
                                                     </div>
                                                 </FormControl>
@@ -342,7 +449,7 @@ const CreateEvent = () => {
                                                                     <Button
                                                                         variant="outline"
                                                                         id="date-picker"
-                                                                        className="w-80 justify-between font-normal"
+                                                                        className="font-normal"
                                                                     >
                                                                         {field.value
                                                                             ? new Date(field.value + 'T00:00:00').toLocaleDateString()
@@ -356,13 +463,17 @@ const CreateEvent = () => {
                                                                 >
                                                                     <Calendar
                                                                         mode="single"
-                                                                        selected={field.value ? new Date(field.value + 'T00:00:00') : undefined}
+                                                                        selected={field.value ? parseDate(field.value) : undefined}
                                                                         captionLayout="dropdown"
+                                                                        disabled={(date) => {
+                                                                            const today = new Date();
+                                                                            today.setHours(0, 0, 0, 0);
+                                                                            return date < today;
+                                                                        }}
                                                                         onSelect={(date) => {
                                                                             if (date) {
                                                                                 setEndDate(date);
-                                                                                // Format date as YYYY-MM-DD for form value
-                                                                                const formattedDate = date.toISOString().split('T')[0];
+                                                                                const formattedDate = formatDate(date);
                                                                                 field.onChange(formattedDate);
                                                                                 setEndOpen(false);
                                                                             }
@@ -371,20 +482,65 @@ const CreateEvent = () => {
                                                                 </PopoverContent>
                                                             </Popover>
                                                         </div>
-                                                        <div className="flex flex-col gap-3">
-                                                            <FormField
-                                                                control={form.control}
-                                                                name="endTime"
-                                                                render={({ field: timeField }) => (
-                                                                    <Input
-                                                                        type="time"
-                                                                        id="time-picker"
-                                                                        step="1"
-                                                                        {...timeField}
-                                                                        className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                                                                    />
-                                                                )}
-                                                            />
+                                                        <div className="flex gap-2">
+                                                            {/* Hour Select */}
+                                                            <Select
+                                                                value={endHour}
+                                                                onValueChange={(value) => {
+                                                                    setEndHour(value);
+                                                                    updateEndTime(value, endMinute, endPeriod);
+                                                                }}
+                                                            >
+                                                                <SelectTrigger className="w-20">
+                                                                    <SelectValue placeholder="HH" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
+                                                                        <SelectItem key={hour} value={String(hour)}>
+                                                                            {String(hour).padStart(2, '0')}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+
+                                                            <span className="flex items-center">:</span>
+
+                                                            {/* Minute Select */}
+                                                            <Select
+                                                                value={endMinute}
+                                                                onValueChange={(value) => {
+                                                                    setEndMinute(value);
+                                                                    updateEndTime(endHour, value, endPeriod);
+                                                                }}
+                                                            >
+                                                                <SelectTrigger className="w-20">
+                                                                    <SelectValue placeholder="MM" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
+                                                                        <SelectItem key={minute} value={String(minute).padStart(2, '0')}>
+                                                                            {String(minute).padStart(2, '0')}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+
+                                                            {/* AM/PM Select */}
+                                                            <Select
+                                                                value={endPeriod}
+                                                                onValueChange={(value) => {
+                                                                    setEndPeriod(value);
+                                                                    updateEndTime(endHour, endMinute, value);
+                                                                }}
+                                                            >
+                                                                <SelectTrigger className="w-20">
+                                                                    <SelectValue placeholder="AM" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectItem value="AM">AM</SelectItem>
+                                                                    <SelectItem value="PM">PM</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
                                                         </div>
                                                     </div>
                                                 </FormControl>
