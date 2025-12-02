@@ -1,4 +1,5 @@
 import Event from "../models/Event.js";
+import { getDateRange } from "../config/dateConfig.js";
 
 export async function createEvent(req, res) {
     try {
@@ -38,24 +39,76 @@ export async function createEvent(req, res) {
 
 export async function getAllEvents(req, res) {
     try {
-        const { page = 1, category } = req.query;
+        const { page = 1, category, day, customStartDate, customEndDate } = req.query;
         const limit = 6;
         const skip = (parseInt(page) - 1) * limit;
 
-        //build filter object
         const filter = {};
 
-        //add category filter if provided
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        filter.endDate = { $gte: startOfToday };
+
         if (category && category !== 'all') {
-            filter.eventCategory = category
+            const formattedCategory = category.toLowerCase().replace(/\s+/g, '-');
+            filter.eventCategory = formattedCategory;
+        }
+        if (day) {
+            const dayValues = day.split('|').map(d => d.trim());
+
+            if (dayValues.length > 1) {
+                const dateRanges = dayValues
+                    .map(d => getDateRange(d))
+                    .filter(range => range !== null);
+
+                if (dateRanges.length > 0) {
+                    filter.$or = dateRanges.map(dateRange => ({
+                        $and: [
+                            { startDate: { $lte: dateRange.end } },
+                            { endDate: { $gte: dateRange.start } }
+                        ]
+                    }));
+                }
+            } else {
+                const dateRange = getDateRange(dayValues[0]);
+                if (dateRange) {
+                    if (!filter.$and) {
+                        filter.$and = [];
+                    }
+                    filter.$and.push(
+                        { startDate: { $lte: dateRange.end } },
+                        { endDate: { $gte: dateRange.start } }
+                    );
+                }
+            }
+        } else if (customStartDate && customEndDate) {
+            const rangeStart = new Date(customStartDate);
+            const rangeEnd = new Date(customEndDate);
+            rangeEnd.setHours(23, 59, 59, 999);
+
+            if (!filter.$and) {
+                filter.$and = [];
+            }
+            filter.$and.push(
+                { startDate: { $lte: rangeEnd } },
+                { endDate: { $gte: rangeStart } }
+            );
+        } else if (customStartDate) {
+            filter.startDate = { $gte: new Date(customStartDate) };
+        } else if (customEndDate) {
+            const rangeEnd = new Date(customEndDate);
+            rangeEnd.setHours(23, 59, 59, 999);
+            filter.endDate = { $gte: now, $lte: rangeEnd };
         }
 
-        //get total count for filtered events
         const totalEvents = await Event.countDocuments(filter);
         const totalPages = Math.ceil(totalEvents / limit);
 
-        //fetch paginated events
-        const events = await Event.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
+        const events = await Event.find(filter)
+            .sort({ startDate: 1, createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
         res.status(200).json({
             events,
             pagination: {
@@ -67,6 +120,9 @@ export async function getAllEvents(req, res) {
             },
             filters: {
                 category: category || 'all',
+                day: day || null,
+                customStartDate: customStartDate || null,
+                customEndDate: customEndDate || null
             }
         });
 

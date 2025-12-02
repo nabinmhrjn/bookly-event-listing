@@ -12,15 +12,8 @@ import { ChevronDownIcon, LoaderIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination"
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
+import { Toggle } from "@/components/ui/toggle"
 
 const EventPage = () => {
     const router = useRouter();
@@ -32,13 +25,7 @@ const EventPage = () => {
     const [loading, setLoading] = useState(false);
     const [eventList, setEventList] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl)
-    const [pagination, setPagination] = useState({
-        currentPage: 1,
-        totalPages: 1,
-        totalEvents: 0,
-        hasNextPage: false,
-        hasPreviousPage: false
-    });
+    const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1, totalEvents: 0, hasNextPage: false, hasPreviousPage: false });
 
     const fetchEvents = async (pageNum, category = '') => {
         setLoading(true);
@@ -176,9 +163,13 @@ const EventPage = () => {
                                 Date Range
                             </Label>
                             <div className="flex gap-2 flex-wrap">
-                                <Button variant="outline" className="text-xs">Today</Button>
-                                <Button variant="outline" className="text-xs">Tomorrow</Button>
-                                <Button variant="outline" className="text-xs">This Weekend</Button>
+                                <Toggle variant="outline">Today</Toggle>
+                                <Toggle variant="outline">Tomorrow</Toggle>
+                                <Toggle variant="outline">This Week</Toggle>
+                                <Toggle variant="outline">This Weekend</Toggle>
+                                <Toggle variant="outline">NextWeek</Toggle>
+
+
                             </div>
 
                             {/* <Popover open={open} onOpenChange={setOpen}> 
