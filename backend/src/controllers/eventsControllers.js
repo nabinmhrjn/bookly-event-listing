@@ -105,7 +105,7 @@ export async function getAllEvents(req, res) {
         const totalPages = Math.ceil(totalEvents / limit);
 
         const events = await Event.find(filter)
-            .sort({ startDate: 1, createdAt: -1 })
+            .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 

@@ -20,20 +20,24 @@ const EventPage = () => {
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get('page')) || 1;
     const categoryFromUrl = searchParams.get('category') || '';
-    const [open, setOpen] = useState(false);
-    const [date, setDate] = useState(null);
+    const dayFromUrl = searchParams.get('day') || '';
     const [loading, setLoading] = useState(false);
     const [eventList, setEventList] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl)
+    const [selectedDay, setSelectedDay] = useState(dayFromUrl ? dayFromUrl.split('|') : [])
     const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1, totalEvents: 0, hasNextPage: false, hasPreviousPage: false });
 
-    const fetchEvents = async (pageNum, category = '') => {
+
+    const fetchEvents = async (pageNum, category, day) => {
         setLoading(true);
         try {
             //build query params
             let queryParams = `page=${pageNum}`;
             if (category) {
                 queryParams += `&category=${encodeURIComponent(category)}`
+            }
+            if (day) {
+                queryParams += `&day=${encodeURIComponent(day)}`
             }
 
             const response = await api.get(`/events?${queryParams}`);
@@ -47,37 +51,62 @@ const EventPage = () => {
     };
 
     useEffect(() => {
-        fetchEvents(currentPage, categoryFromUrl);
-    }, [currentPage, categoryFromUrl]);
+        fetchEvents(currentPage, categoryFromUrl, dayFromUrl);
+    }, [currentPage, categoryFromUrl, dayFromUrl]);
 
     const handleCategoryChange = (category) => {
         setSelectedCategory(category)
 
         //update url with category and reset to page 1
-        const params = new URLSearchParams();
-        params.set('page', '1');
+        let queryString = '';
         if (category) {
-            params.set('category', category);
+            queryString = `category=${encodeURIComponent(category)}`;
         }
 
-        router.push(`/events?${params.toString()}`);
+        router.push(`/events${queryString ? '?' + queryString : ''}`);
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
 
     const handlePageChange = (newPage) => {
-        const params = new URLSearchParams();
-        params.set('page', newPage.toString());
+        const queryParts = [];
+        queryParts.push(`page=${newPage}`);
 
         if (selectedCategory) {
-            params.set('category', selectedCategory)
+            queryParts.push(`category=${encodeURIComponent(selectedCategory)}`);
         }
 
-        router.push(`/events?${params.toString()}`);
+        if (selectedDay.length > 0) {
+            queryParts.push(`day=${selectedDay.join('|')}`);
+        }
+
+        router.push(`/events?${queryParts.join('&')}`);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleDayChange = (day) => {
+        const newDays = selectedDay.includes(day)
+            ? selectedDay.filter(item => item !== day)
+            : [...selectedDay, day];
+
+        // Update state
+        setSelectedDay(newDays);
+
+        // Update URL with new day filters
+        const queryParts = [];
+        if (selectedCategory) {
+            queryParts.push(`category=${encodeURIComponent(selectedCategory)}`);
+        }
+        if (newDays.length > 0) {
+            queryParts.push(`day=${newDays.join('|')}`);
+        }
+
+        router.push(`/events${queryParts.length > 0 ? '?' + queryParts.join('&') : ''}`);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleClearFilters = () => {
         setSelectedCategory('');
+        setSelectedDay([]);
         router.push('/events')
         window.scrollTo({ top: 0, behavior: 'smooth' })
     }
@@ -117,6 +146,7 @@ const EventPage = () => {
     };
 
     return (
+
         <div className="bg-primary/5 py-5">
             <div className="max-w-7xl mx-auto">
                 <div className="pb-2">
@@ -136,7 +166,7 @@ const EventPage = () => {
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="comedy-show" id="Comedy Show" />
-                                    <Label htmlFor="sports">Comedy Show</Label>
+                                    <Label htmlFor="Comedy Show">Comedy Show</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="sports-event" id="Sports Event" />
@@ -163,52 +193,29 @@ const EventPage = () => {
                                 Date Range
                             </Label>
                             <div className="flex gap-2 flex-wrap">
-                                <Toggle variant="outline">Today</Toggle>
-                                <Toggle variant="outline">Tomorrow</Toggle>
-                                <Toggle variant="outline">This Week</Toggle>
-                                <Toggle variant="outline">This Weekend</Toggle>
-                                <Toggle variant="outline">NextWeek</Toggle>
-
-
-                            </div>
-
-                            {/* <Popover open={open} onOpenChange={setOpen}> 
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        id="date"
-                                        className="w-full justify-between font-normal"
-                                    >
-                                        {date ? date.toLocaleDateString() : "Select date"}
-                                        <ChevronDownIcon />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent
-                                    className="w-full overflow-hidden p-0"
-                                    align="start"
+                                <Toggle
+                                    variant="outline"
+                                    pressed={selectedDay.includes("today")}
+                                    onPressedChange={() => handleDayChange('today')}
                                 >
-                                    <Calendar
-                                        mode="single"
-                                        selected={date}
-                                        captionLayout="dropdown"
-                                        onSelect={(date) => {
-                                            setDate(date);
-                                            setOpen(false);
-                                        }}
-                                    />
-                                </PopoverContent>
-                            </Popover> */}
-                        </div>
-
-                        {/* LOCATION */}
-                        {/* <div className="mt-8 space-y-2">
-                            <Label htmlFor="date" className="px-1 font-bold">
-                                Location
-                            </Label>
-                            <div className="flex border items-center">
-                                <Input placeholder="Enter a city" className="border-none" />
+                                    Today
+                                </Toggle>
+                                <Toggle
+                                    variant="outline"
+                                    pressed={selectedDay.includes("tomorrow")}
+                                    onPressedChange={() => handleDayChange('tomorrow')}
+                                >
+                                    Tomorrow
+                                </Toggle>
+                                <Toggle
+                                    variant="outline"
+                                    pressed={selectedDay.includes("this-weekend")}
+                                    onPressedChange={() => handleDayChange('this-weekend')}
+                                >
+                                    This Weekend
+                                </Toggle>
                             </div>
-                        </div> */}
+                        </div>
 
                         <div className="mt-8">
                             <Button className="w-full" onClick={handleClearFilters}>Clear Filters</Button>
