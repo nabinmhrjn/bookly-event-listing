@@ -68,7 +68,8 @@ export const login = async (req, res) => {
                 user: {
                     _id: user._id,
                     fullName: user.fullName,
-                    email: user.email
+                    email: user.email,
+                    token
                 }
             })
         } else {
@@ -78,6 +79,22 @@ export const login = async (req, res) => {
         console.error("Error in login controller", error)
         res.status(500).json({ message: "Internal server error" })
     }
-}
+};
+
+export const logout = async (req, res) => {
+    try {
+        res.cookie("jwt", "", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: 0
+        })
+        res.status(200).json({ message: "User logged out successfully" })
+    } catch (error) {
+        console.error("Error in logout controller", error)
+        res.status(500).json({ message: "Internal server error" })
+    }
+};
+
 
 

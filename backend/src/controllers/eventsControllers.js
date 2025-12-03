@@ -1,5 +1,5 @@
 import Event from "../models/Event.js";
-import { getDateRange } from "../config/dateConfig.js";
+import { getDateRange } from "../utils/dateConfig.js";
 
 export async function createEvent(req, res) {
     try {
