@@ -96,5 +96,21 @@ export const logout = async (req, res) => {
     }
 };
 
+export const profile = (req, res) => {
+    try {
+        const user = {
+            _id: req.user._id,
+            fullName: req.user.fullName,
+            email: req.user.email,
+            role: req.user.role
+        }
+        res.status(200).json(user)
+    } catch (error) {
+        console.error("Error in profile controller", error)
+        res.status(500).json({ message: "Internal server error" })
+    }
+};
+
+
 
 
