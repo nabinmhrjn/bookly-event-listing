@@ -146,7 +146,6 @@ const EventPage = () => {
     };
 
     return (
-
         <div className="bg-primary/5 py-5">
             <div className="max-w-7xl mx-auto">
                 <div className="pb-2">
@@ -231,11 +230,11 @@ const EventPage = () => {
                         ) : (
                             <>
                                 <div className="grid grid-cols-3 gap-4">
-                                    {eventList.map((item) => (
+                                    {eventList.length > 0 ? eventList.map((item) => (
                                         <Link href={`/events/${item._id}`} key={item._id}>
                                             <EventCard item={item} />
                                         </Link>
-                                    ))}
+                                    )) : <p>No events found</p>}
                                 </div>
 
                                 {/* Pagination */}
