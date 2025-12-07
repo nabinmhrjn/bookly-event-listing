@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -18,6 +17,9 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
+import { handleApiError } from "@/lib/utils";
 
 const formSchema = z.object({
     email: z
@@ -26,13 +28,15 @@ const formSchema = z.object({
         .email({ message: "Invalid email address" }),
     password: z
         .string()
-        .min(1, { message: "Password is required" }),
+        .min(1, { message: "Password is required" })
+        .min(6, { message: "Password must be at least 6 characters" }),
 });
 
 const Login = () => {
     const router = useRouter();
-
+    const { login } = useAuth();
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -42,9 +46,24 @@ const Login = () => {
         },
     });
 
-    function onSubmit(values) {
-        console.log(values);
+    async function onSubmit(values) {
+        setLoading(true);
+
+        try {
+            await login(values);
+
+            toast.success("Login successful! Welcome back!");
+            router.push("/"); // or wherever you want to redirect
+
+        } catch (error) {
+            const errorMessage = handleApiError(error);
+            toast.error(errorMessage);
+
+        } finally {
+            setLoading(false);
+        }
     }
+
     return (
         <div className="max-w-7xl mx-auto min-h-screen flex items-center justify-center">
             <div className="w-full flex items-center gap-20 overflow-hidden rounded-3xl drop-shadow-2xl">
@@ -80,11 +99,11 @@ const Login = () => {
                                         <FormLabel>Email</FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="Enter your email or username"
+                                                placeholder="Enter your email"
+                                                disabled={loading}
                                                 {...field}
                                             />
                                         </FormControl>
-
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -96,10 +115,11 @@ const Login = () => {
                                     <FormItem>
                                         <FormLabel>Password</FormLabel>
                                         <FormControl>
-                                            <div className="flex items-center gap-2 border border-primary/10">
+                                            <div className="flex items-center gap-2 border border-primary/10 rounded-md">
                                                 <Input
                                                     type={showPassword ? "text" : "password"}
                                                     placeholder="Enter your password"
+                                                    disabled={loading}
                                                     {...field}
                                                     className="w-full border-none focus-visible:ring-0"
                                                 />
@@ -118,13 +138,12 @@ const Login = () => {
                                                 )}
                                             </div>
                                         </FormControl>
-
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            <Button className="w-full" type="submit">
-                                Login
+                            <Button className="w-full" type="submit" disabled={loading}>
+                                {loading ? "Logging in..." : "Login"}
                             </Button>
                         </form>
                     </Form>
@@ -133,7 +152,7 @@ const Login = () => {
                         <span className="text-center">
                             New to Bookly?{" "}
                             <span
-                                className="text-blue-600 cursor-pointer"
+                                className="text-blue-600 cursor-pointer hover:underline"
                                 onClick={() => router.push("/signup")}
                             >
                                 Create an account
@@ -141,14 +160,13 @@ const Login = () => {
                         </span>
                         <span>
                             <span
-                                className="text-blue-600 cursor-pointer"
-                                onClick={() => router.push("#")}
+                                className="text-blue-600 cursor-pointer hover:underline"
+                                onClick={() => router.push("/forgot-password")}
                             >
                                 Forgot Password?
                             </span>
                         </span>
                     </div>
-
                 </div>
             </div>
         </div>

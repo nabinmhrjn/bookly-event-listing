@@ -17,6 +17,10 @@ import { Input } from "@/components/ui/input";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
+import { handleApiError } from "@/lib/utils";
+
 
 
 
@@ -50,11 +54,13 @@ const formSchema = z
         }
     );
 
-const Login = () => {
+const Signup = () => {
     const router = useRouter();
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [loading, setLoading] = useState(false)
+    const { signup } = useAuth();
 
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -66,8 +72,20 @@ const Login = () => {
         },
     });
 
-    function onSubmit(values) {
-        console.log(values);
+    const onSubmit = async (values) => {
+        setLoading(true);
+
+        try {
+            await signup(values);
+            toast.success("Account created successfully! Welcome aboard!");
+            router.push("/");
+
+        } catch (error) {
+            toast.error(handleApiError(error));
+
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -216,4 +234,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Signup;
