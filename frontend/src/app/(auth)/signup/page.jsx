@@ -20,9 +20,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { handleApiError } from "@/lib/utils";
-
-
-
+import { Spinner } from "@/components/ui/spinner";
 
 const formSchema = z
     .object({
@@ -59,7 +57,7 @@ const Signup = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
     const { signup } = useAuth();
 
     const form = useForm({
@@ -77,16 +75,12 @@ const Signup = () => {
 
         try {
             await signup(values);
-            toast.success("Account created successfully! Welcome aboard!");
             router.push("/");
-
         } catch (error) {
             toast.error(handleApiError(error));
-
-        } finally {
             setLoading(false);
         }
-    }
+    };
 
     return (
         <div className="max-w-7xl mx-auto min-h-screen flex items-center justify-center">
@@ -221,13 +215,28 @@ const Signup = () => {
                                 )}
                             />
 
-                            <Button className="w-full" type="submit">
-                                Sign Up
+                            <Button className="w-full" type="submit" disabled={loading}>
+                                {loading ? (
+                                    <>
+                                        <Spinner className="mr-2" />
+                                        Signing up...
+                                    </>
+                                ) : (
+                                    "Sign Up"
+                                )}
                             </Button>
                         </form>
                     </Form>
 
-                    <span className="text-center">Already have an account? <span className="text-blue-600 cursor-pointer" onClick={() => router.push("/login")}>Login</span></span>
+                    <span className="text-center">
+                        Already have an account?{" "}
+                        <span
+                            className="text-blue-600 cursor-pointer"
+                            onClick={() => router.push("/login")}
+                        >
+                            Login
+                        </span>
+                    </span>
                 </div>
             </div>
         </div>
