@@ -20,6 +20,7 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { handleApiError } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
 
 const formSchema = z.object({
     email: z
@@ -46,23 +47,19 @@ const Login = () => {
         },
     });
 
-    async function onSubmit(values) {
+    const onSubmit = async (values) => {
         setLoading(true);
 
         try {
             await login(values);
-
-            toast.success("Login successful! Welcome back!");
-            router.push("/"); // or wherever you want to redirect
+            router.push("/");
 
         } catch (error) {
             const errorMessage = handleApiError(error);
             toast.error(errorMessage);
-
-        } finally {
-            setLoading(false);
+            setLoading(false); // Only set loading to false on error
         }
-    }
+    };
 
     return (
         <div className="max-w-7xl mx-auto min-h-screen flex items-center justify-center">
@@ -143,7 +140,14 @@ const Login = () => {
                                 )}
                             />
                             <Button className="w-full" type="submit" disabled={loading}>
-                                {loading ? "Logging in..." : "Login"}
+                                {loading ? (
+                                    <>
+                                        <Spinner className="mr-2" />
+                                        Logging in...
+                                    </>
+                                ) : (
+                                    "Login"
+                                )}
                             </Button>
                         </form>
                     </Form>
