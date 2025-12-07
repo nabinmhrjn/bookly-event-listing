@@ -11,7 +11,7 @@ export const signup = async (req, res) => {
         }
         const user = await User.findOne({ email })
         if (user) {
-            return res.status(400).json({ message: "User already exists" })
+            return res.status(409).json({ message: "User already exists" })
         }
         const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -20,15 +20,26 @@ export const signup = async (req, res) => {
             email,
             password: hashedPassword
         })
-        if (newUser) {
-            generateToken(res, newUser._id)
-            res.status(201).json({
-                message: "User created successfully",
-                user: newUser
-            })
-        } else {
-            return res.status(400).json({ message: "User creation failed" })
-        }
+
+        const token = generateToken(newUser._id);
+
+        res.cookie("token", token, {
+            httpPnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
+        res.status(201).json({
+            message: "User created successfully",
+            token,
+            user: {
+                id: newUser._id,
+                fullName: newUser.fullName,
+                email: newUser.email,
+                createdAt: newUser.createdAt
+            }
+        });
     } catch (error) {
         console.error("Error in signup controller", error)
         res.status(500).json({ message: "Internal server error" })
