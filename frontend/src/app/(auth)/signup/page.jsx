@@ -14,7 +14,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, ArrowLeftIcon } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -83,7 +83,17 @@ const Signup = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto min-h-screen flex items-center justify-center">
+        <div className="max-w-7xl mx-auto min-h-screen flex flex-col items-start justify-center">
+            <div className="mb-2">
+                <Button
+                    variant="ghost"
+                    onClick={() => router.push("/")}
+                    className="flex items-center gap-2 hover:bg-transparent cursor-pointer"
+                >
+                    <ArrowLeftIcon size={18} />
+                    Back to Home
+                </Button>
+            </div>
             <div className="w-full flex items-center gap-20 overflow-hidden rounded-3xl drop-shadow-2xl">
                 <div className="w-1/2">
                     <div className="relative w-full h-[600px]">
@@ -98,7 +108,10 @@ const Signup = () => {
                     </div>
                 </div>
                 <div className="w-1/2 space-y-8">
-                    <h3 className="text-center font-bold text-xl">Bookly</h3>
+                    <div className="flex items-center justify-between">
+
+                        <h3 className="font-bold text-xl">Bookly</h3>
+                    </div>
 
                     <div className="mt-4">
                         <div className="flex flex-col">
