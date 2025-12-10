@@ -17,28 +17,30 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
 import api from "@/lib/axios";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
-    fullname: z
+    fullName: z
         .string()
         .min(2, {
             message: "Username must be at least 2 characters.",
         }),
-    emailaddress: z
+    email: z
         .string()
         .min(1, "Email address is required")
         .email("Invalid email address"),
 });
 
 const UserProfilePage = () => {
-    const { user } = useAuth();
+    const { user, updateUser } = useAuth();
     const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(false)
 
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            fullname: "",
-            emailaddress: "",
+            fullName: "",
+            email: "",
         },
     });
 
@@ -48,8 +50,8 @@ const UserProfilePage = () => {
             setUserData(response.data);
 
             form.reset({
-                fullname: response.data.fullName || "",
-                emailaddress: response.data.email || "",
+                fullName: response.data.fullName || "",
+                email: response.data.email || "",
             });
         };
 
@@ -66,8 +68,23 @@ const UserProfilePage = () => {
         })
         : "";
 
-    function onSubmit(values) {
-        console.log(values);
+    const onSubmit = async (values) => {
+        setLoading(true)
+        try {
+            const response = await updateUser(user._id, values);
+            setUserData(response.user);
+            form.reset({
+                fullName: response.user.fullName,
+                email: response.user.email,
+            });
+            toast.success(response.message || "Profile updated successfully!");
+        } catch (error) {
+            console.error("Error updating user: ", error)
+            const errorMessage = error.response?.data?.message || "Failed to update user. Please try again.";
+            toast.error(errorMessage);
+        } finally {
+            setLoading(false)
+        }
     }
     return (
         <div className="bg-primary/5 pt-14 pb-16">
@@ -124,7 +141,7 @@ const UserProfilePage = () => {
                                     <FormField
                                         className="w-1/2"
                                         control={form.control}
-                                        name="fullname"
+                                        name="fullName"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>FullName</FormLabel>
@@ -143,7 +160,7 @@ const UserProfilePage = () => {
                                     <FormField
                                         className="w-1/2"
                                         control={form.control}
-                                        name="emailaddress"
+                                        name="email"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Email Address</FormLabel>
@@ -159,7 +176,9 @@ const UserProfilePage = () => {
                                     />
                                 </div>
                             </div>
-                            <Button type="submit">Save Changes</Button>
+                            <Button type="submit" disabled={!form.formState.isDirty || loading}>
+                                {loading ? "Saving..." : "Save Changes"}
+                            </Button>
                         </form>
                     </Form>
                 </div>
