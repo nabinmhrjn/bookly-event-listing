@@ -107,21 +107,13 @@ export const logout = async (req, res) => {
     }
 };
 
-export const profile = (req, res) => {
+export const getUserById = async (req, res) => {
     try {
-        const user = {
-            _id: req.user._id,
-            fullName: req.user.fullName,
-            email: req.user.email,
-            role: req.user.role
-        }
-        res.status(200).json(user)
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ message: "User not found!" });
+        res.json(user);
     } catch (error) {
-        console.error("Error in profile controller", error)
-        res.status(500).json({ message: "Internal server error" })
+        console.error("Error in user controller of getting user by id", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 };
-
-
-
-
