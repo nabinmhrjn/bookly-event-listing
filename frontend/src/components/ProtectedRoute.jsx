@@ -10,11 +10,10 @@ export default function ProtectedRoute({ children }) {
 
     useEffect(() => {
         if (!loading && !user) {
-            router.push('/login');
+            router.push('/');
         }
     }, [user, loading, router]);
 
-    // Show ONLY loading screen while checking authentication
     if (loading) {
         return (
             <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
@@ -26,11 +25,11 @@ export default function ProtectedRoute({ children }) {
         );
     }
 
-    // Don't render children if not authenticated
+
     if (!user) {
         return null;
     }
 
-    // User is authenticated, render the protected content
+
     return <>{children}</>;
 }
