@@ -39,34 +39,47 @@ export async function createEvent(req, res) {
 
 export async function getAllEvents(req, res) {
     try {
-        const { page = 1, category, day, customStartDate, customEndDate } = req.query;
+        const {
+            page = 1,
+            category,
+            day,
+            customStartDate,
+            customEndDate,
+        } = req.query;
         const limit = 6;
         const skip = (parseInt(page) - 1) * limit;
 
         const filter = {};
 
         const now = new Date();
-        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        const startOfToday = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(),
+            0,
+            0,
+            0
+        );
         filter.endDate = { $gte: startOfToday };
 
-        if (category && category !== 'all') {
-            const formattedCategory = category.toLowerCase().replace(/\s+/g, '-');
+        if (category && category !== "all") {
+            const formattedCategory = category.toLowerCase().replace(/\s+/g, "-");
             filter.eventCategory = formattedCategory;
         }
         if (day) {
-            const dayValues = day.split('|').map(d => d.trim());
+            const dayValues = day.split("|").map((d) => d.trim());
 
             if (dayValues.length > 1) {
                 const dateRanges = dayValues
-                    .map(d => getDateRange(d))
-                    .filter(range => range !== null);
+                    .map((d) => getDateRange(d))
+                    .filter((range) => range !== null);
 
                 if (dateRanges.length > 0) {
-                    filter.$or = dateRanges.map(dateRange => ({
+                    filter.$or = dateRanges.map((dateRange) => ({
                         $and: [
                             { startDate: { $lte: dateRange.end } },
-                            { endDate: { $gte: dateRange.start } }
-                        ]
+                            { endDate: { $gte: dateRange.start } },
+                        ],
                     }));
                 }
             } else {
@@ -116,16 +129,15 @@ export async function getAllEvents(req, res) {
                 totalPages,
                 totalEvents,
                 hasNextPage: page < totalPages,
-                hasPreviousPage: page > 1
+                hasPreviousPage: page > 1,
             },
             filters: {
-                category: category || 'all',
+                category: category || "all",
                 day: day || null,
                 customStartDate: customStartDate || null,
-                customEndDate: customEndDate || null
-            }
+                customEndDate: customEndDate || null,
+            },
         });
-
     } catch (error) {
         console.error("Error in getAllEvents controller", error);
         res.status(500).json({ message: "Internal server error" });
@@ -175,7 +187,7 @@ export async function updateEvent(req, res) {
             return res.status(404).json({ message: "Event not found" });
         res.status(200).json({
             message: "Event updated successfully",
-            event: updatedEvent
+            event: updatedEvent,
         });
     } catch (error) {
         console.error("Error in updateEvent controller", error);
@@ -186,7 +198,8 @@ export async function updateEvent(req, res) {
 export async function deleteEvent(req, res) {
     try {
         const deletedEvent = await Event.findByIdAndDelete(req.params.id);
-        if (!deletedEvent) return res.status(404).json({ message: "Event not found" });
+        if (!deletedEvent)
+            return res.status(404).json({ message: "Event not found" });
         res.status(200).json({ message: "Event deleted successfully!" });
     } catch (error) {
         console.error("Error in deleteEvent controller", error);
