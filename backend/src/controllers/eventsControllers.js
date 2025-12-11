@@ -15,6 +15,7 @@ export async function createEvent(req, res) {
             endTime,
         } = req.body;
         const event = new Event({
+            eventOrganizer: req.user.id,
             eventName,
             eventDescription,
             eventCategory,
@@ -117,7 +118,7 @@ export async function getAllEvents(req, res) {
         const totalEvents = await Event.countDocuments(filter);
         const totalPages = Math.ceil(totalEvents / limit);
 
-        const events = await Event.find(filter)
+        const events = await Event.find(filter).populate("eventOrganizer", "fullName")
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
@@ -146,7 +147,7 @@ export async function getAllEvents(req, res) {
 
 export async function getEventById(req, res) {
     try {
-        const event = await Event.findById(req.params.id);
+        const event = await Event.findById(req.params.id).populate("eventOrganizer", "fullName email");
         if (!event) return res.status(404).json({ message: "Event not found!" });
         res.json(event);
     } catch (error) {

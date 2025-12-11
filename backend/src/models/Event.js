@@ -45,7 +45,12 @@ const eventSchema = new mongoose.Schema(
         endTime: {
             type: String, // Keep as String for HH:MM format
             required: true
-        }
+        },
+        eventOrganizer: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: false
+        },
     },
     { timestamps: true }
 );
