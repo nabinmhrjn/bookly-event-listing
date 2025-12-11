@@ -1,4 +1,5 @@
 import Event from "../models/Event.js";
+import User from "../models/User.js";
 import { getDateRange } from "../utils/dateConfig.js";
 
 export async function createEvent(req, res) {
@@ -204,6 +205,34 @@ export async function deleteEvent(req, res) {
         res.status(200).json({ message: "Event deleted successfully!" });
     } catch (error) {
         console.error("Error in deleteEvent controller", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+export async function getEventByUserId(req, res) {
+    try {
+        const userId = req.params.id;
+
+        if (!userId) {
+            return res.status(400).json({ message: "User ID is required" });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const events = await Event.find({ eventOrganizer: userId })
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            events,
+            totalEvents: events.length,
+            eventOrganizer: userId
+        });
+
+    } catch (error) {
+        console.error("Error in getEventByUserId", error);
         res.status(500).json({ message: "Internal server error" });
     }
 }
