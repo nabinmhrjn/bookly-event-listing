@@ -82,7 +82,8 @@ Bookly is a comprehensive event management platform that enables users to discov
 - [x] Update event
 - [x] Delete event
 - [x] Event filtering (category, date)
-- [ ] Event search functionality
+- [x] Event listing by user functionality
+- [x] Show listed event of user in UI
 - [ ] Event image upload
 - [ ] Event capacity management
 - [ ] Event status (draft, published, cancelled)
