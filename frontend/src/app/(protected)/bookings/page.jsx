@@ -83,7 +83,7 @@ const BookingPage = () => {
                 </div>
                 <div className="mt-8 flex flex-col gap-4">
                     {bookingEvents.map((item) => (
-                        <div key={item.id} className=" bg-white p-4 flex gap-4">
+                        <div key={item.id} className="p-4 flex gap-4">
                             <div className="w-[400px] h-48 relative overflow-hidden">
                                 <Image src="/test.jpeg" width={500} height={500} alt="Picture of the author" className='absolute w-full h-full object-cover' />
                             </div>

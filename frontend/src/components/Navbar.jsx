@@ -13,6 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { LogOut, Plug, Settings, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { ModeToggle } from "@/components/ModeToggle"
 
 const Navbar = () => {
     const { user, logout, loading } = useAuth();
@@ -41,8 +42,15 @@ const Navbar = () => {
                 </Link>
             </div>
 
+            {/* THEME TOGGLE */}
+
+
             {/* AUTH BUTTONS */}
             <div className="flex items-center gap-2">
+                <div className=" mr-2">
+
+                    <ModeToggle />
+                </div>
                 {loading ? (
                     // Show skeleton/placeholder while loading
                     <div className="flex items-center gap-2">

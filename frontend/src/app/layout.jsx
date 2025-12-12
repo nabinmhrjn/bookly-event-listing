@@ -3,6 +3,8 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 import ConditionalLayout from "@/components/ConditionalLayout";
+import { ThemeProvider } from "@/components/ThemeProvider";
+
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -25,12 +27,17 @@ export default function RootLayout({ children }) {
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                <AuthProvider>
-                    <ConditionalLayout>
-                        {children}
-                    </ConditionalLayout>
-                    <Toaster richColors position="top-right" />
-                </AuthProvider>
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <AuthProvider>
+                        <ConditionalLayout>{children}</ConditionalLayout>
+                        <Toaster richColors position="top-right" />
+                    </AuthProvider>
+                </ThemeProvider>
             </body>
         </html>
     );

@@ -17,6 +17,14 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import api from "@/lib/axios";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 const LitingPage = () => {
     const { user } = useAuth();
@@ -43,7 +51,7 @@ const LitingPage = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white p-4">
+                    <div className="p-4">
                         <div className="flex justify-between items-center">
                             <div className="w-1/2 flex items-center border pl-2">
                                 <Search size={20} className="text-primary/30" />
@@ -58,17 +66,17 @@ const LitingPage = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white p-4 mt-4">
+                    <div className="p-4 mt-4">
                         <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="w-[450px]">Event</TableHead>
                                     <TableHead className="w-[150px]">Date</TableHead>
-                                    <TableHead className="w-[100px]">Approval</TableHead>
+                                    {/* <TableHead className="w-[100px]">Approval</TableHead>
                                     <TableHead className="w-[100px]">Status</TableHead>
                                     <TableHead className="w-[80px]">Phase 1</TableHead>
                                     <TableHead className="w-[80px]">Phase 2</TableHead>
-                                    <TableHead className="w-[80px]">Phase 3</TableHead>
+                                    <TableHead className="w-[80px]">Phase 3</TableHead> */}
                                     <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -87,7 +95,7 @@ const LitingPage = () => {
                                                 })
                                                 : ""}
                                         </TableCell>
-                                        <TableCell className="">
+                                        {/* <TableCell className="">
                                             <Badge variant="destructive">Pending</Badge>
                                         </TableCell>
                                         <TableCell className="">
@@ -95,9 +103,24 @@ const LitingPage = () => {
                                         </TableCell>
                                         <TableCell className="text-right">2000</TableCell>
                                         <TableCell className="text-right">2000</TableCell>
-                                        <TableCell className="text-right">2000</TableCell>
-                                        <TableCell className="flex justify-end gap-10">
-                                            <Button variant="outline">View Detail</Button>
+                                        <TableCell className="text-right">2000</TableCell> */}
+                                        <TableCell className="flex justify-end gap-2">
+                                            <Dialog>
+                                                <DialogTrigger asChild>
+                                                    <Button variant="outline">View Detail</Button>
+                                                </DialogTrigger>
+                                                <DialogContent>
+                                                    <DialogHeader>
+                                                        <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                                        <DialogDescription>
+                                                            This action cannot be undone. This will
+                                                            permanently delete your account and remove your
+                                                            data from our servers.
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                </DialogContent>
+                                            </Dialog>
+                                            <Button variant="destructive">Delete</Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -112,7 +135,8 @@ const LitingPage = () => {
                             No Events Yet
                         </h3>
                         <p className="text-primary/60 mb-6">
-                            You haven't created any events. Start by creating your first event!
+                            You haven't created any events. Start by creating your first
+                            event!
                         </p>
                         <Link href="/create">
                             <Button>Create Your First Event</Button>

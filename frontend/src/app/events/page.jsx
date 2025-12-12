@@ -153,7 +153,7 @@ const EventPage = () => {
                 </div>
                 <div className="flex gap-4">
                     {/* LEFT SECTION */}
-                    <div className="w-[20%] p-4 bg-white h-[430px]">
+                    <div className="w-[20%] p-4 h-[430px]">
                         <p className="font-bold">Category</p>
 
                         {/* RADIO GROUP */}

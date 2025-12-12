@@ -33,7 +33,7 @@ const EasySteps = () => {
                 </div>
                 <div className="grid grid-cols-3 items-center gap-4">
                     {easyStep.map((item) => (
-                        <div key={item.id} className="w-full p-8 bg-white flex flex-col items-center justify-center gap-2">
+                        <div key={item.id} className="w-full p-8 flex flex-col items-center justify-center gap-2">
                             <div className="p-2 flex items-center justify-center bg-primary/10 rounded-full">
                                 <Search />
                             </div>
