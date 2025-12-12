@@ -19,24 +19,48 @@ import { useEffect, useState } from "react";
 import api from "@/lib/axios";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 const LitingPage = () => {
     const { user } = useAuth();
     const [userEvents, setUserEvents] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchUserEvents = async () => {
-            const response = await api.get(`events/user/${user._id}`);
-            setUserEvents(response?.data?.events);
+            setLoading(true);
+            try {
+                const response = await api.get(`events/user/${user._id}`);
+                setUserEvents(response?.data?.events);
+            } catch (error) {
+                console.error("Error in fetching user events", error);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchUserEvents();
     }, [user._id]);
+
+    const handleDelete = async (eventId) => {
+        try {
+            const response = await api.delete(`events/${eventId}`);
+            setUserEvents((prevEvents) => prevEvents.filter((event) => event._id !== eventId));
+            toast.success(response.data?.message);
+        } catch (error) {
+            const errorMessage =
+                error.response?.data?.message ||
+                "Failed to delete event. Please try again.";
+            toast.error(errorMessage);
+        }
+    };
 
     return (
         <div className="bg-primary/5 pt-14 pb-16">
@@ -105,22 +129,40 @@ const LitingPage = () => {
                                         <TableCell className="text-right">2000</TableCell>
                                         <TableCell className="text-right">2000</TableCell> */}
                                         <TableCell className="flex justify-end gap-2">
+                                            <Button variant="outline">View</Button>
                                             <Dialog>
                                                 <DialogTrigger asChild>
-                                                    <Button variant="outline">View Detail</Button>
+                                                    <Button variant="destructive">Delete</Button>
                                                 </DialogTrigger>
                                                 <DialogContent>
                                                     <DialogHeader>
-                                                        <DialogTitle>Are you absolutely sure?</DialogTitle>
-                                                        <DialogDescription>
+                                                        <DialogTitle>
+                                                            Are you sure you want to delete this event?
+                                                        </DialogTitle>
+                                                        <DialogDescription className="text-xs">
                                                             This action cannot be undone. This will
-                                                            permanently delete your account and remove your
-                                                            data from our servers.
+                                                            permanently delete your event and remove your data
+                                                            from our servers.
                                                         </DialogDescription>
                                                     </DialogHeader>
+                                                    <DialogFooter className="sm:justify-start">
+                                                        <DialogClose asChild>
+                                                            <Button type="button" variant="secondary">
+                                                                Cancel
+                                                            </Button>
+                                                        </DialogClose>
+                                                        <DialogClose asChild>
+                                                            <Button
+                                                                type="button"
+                                                                variant="destructive"
+                                                                onClick={() => handleDelete(item._id)}
+                                                            >
+                                                                Confirm
+                                                            </Button>
+                                                        </DialogClose>
+                                                    </DialogFooter>
                                                 </DialogContent>
                                             </Dialog>
-                                            <Button variant="destructive">Delete</Button>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -129,7 +171,7 @@ const LitingPage = () => {
                     </div>
                 </div>
             ) : (
-                <div className="bg-white p-16 mt-4 flex flex-col items-center justify-center">
+                <div className="p-16 mt-4 flex flex-col items-center justify-center">
                     <div className="text-center">
                         <h3 className="text-2xl font-semibold text-primary/80 mb-2">
                             No Events Yet

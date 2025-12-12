@@ -115,19 +115,19 @@ const CreateEvent = () => {
 
             console.log("Event created successfully:", response.data);
 
-            // Reset form
+
             form.reset();
             setStartDate(null);
             setEndDate(null);
 
-            // Optional: Add success notification
+
             toast.success("Event created successfully!");
 
-            // Optional: Redirect to events list or event detail page
+
             // router.push(`/events/${response.data.event._id}`);
         } catch (error) {
             console.error("Error creating event:", error);
-            // Show user-friendly error message
+
             const errorMessage = error.response?.data?.message || "Failed to create event. Please try again.";
             toast.error(errorMessage);
         } finally {
@@ -192,7 +192,7 @@ const CreateEvent = () => {
     };
 
     return (
-        <div className="bg-primary/5 pt-14 pb-16">
+        <div className="pt-14 pb-16">
             <div className="max-w-4xl mx-auto">
                 <div className="pb-10">
                     <p className="text-2xl font-bold">Create a New Event</p>
@@ -205,7 +205,7 @@ const CreateEvent = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                         {/* EVENT DETAILS */}
-                        <div className="w-full mx-auto bg-white p-4">
+                        <div className="w-full mx-auto p-4">
                             <p className="text-xl font-bold pb-2">Event Details</p>
                             <div className="bg-black/10 h-0.5"></div>
                             <div className="mt-8 space-y-4">
@@ -302,7 +302,7 @@ const CreateEvent = () => {
                         </div>
 
                         {/* DATE & TIME */}
-                        <div className="w-full mx-auto bg-white p-4">
+                        <div className="w-full mx-auto p-4">
                             <p className="text-xl font-bold pb-2">Date & Time</p>
                             <div className="bg-black/10 h-0.5"></div>
                             <div className="mt-8 flex items-center gap-4">
@@ -557,7 +557,7 @@ const CreateEvent = () => {
                         </div>
 
                         {/* LOCATION */}
-                        <div className="w-full mx-auto bg-white p-4">
+                        <div className="w-full mx-auto p-4">
                             <p className="text-xl font-bold pb-2">Location</p>
                             <div className="bg-black/10 h-0.5"></div>
                             <div className="mt-8 flex items-center w-full gap-4">
