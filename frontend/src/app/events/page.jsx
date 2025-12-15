@@ -146,7 +146,7 @@ const EventPage = () => {
     };
 
     return (
-        <div className="bg-primary/5 py-5">
+        <div className="py-5">
             <div className="max-w-7xl mx-auto">
                 <div className="pb-2">
                     <p className=" text-lg font-bold">Filters</p>

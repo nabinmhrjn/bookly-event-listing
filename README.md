@@ -108,7 +108,7 @@ Bookly is a comprehensive event management platform that enables users to discov
 - [ ] Loading states and skeletons
 - [ ] Error boundaries
 - [ ] Animations and transitions
-- [ ] Dark mode support
+- [x] Dark mode support
 - [ ] Accessibility improvements
 
 ### Phase 6: Advanced Features 🚀

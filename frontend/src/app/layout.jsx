@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
                 >
                     <AuthProvider>
                         <ConditionalLayout>{children}</ConditionalLayout>
-                        <Toaster richColors position="top-right" />
+                        <Toaster richColors position="bottom-right" />
                     </AuthProvider>
                 </ThemeProvider>
             </body>

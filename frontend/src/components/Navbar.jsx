@@ -23,21 +23,21 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="max-w-7xl mx-auto flex justify-between items-center h-12">
+        <nav className="max-w-7xl mx-auto flex justify-between items-center py-2 border-b">
             {/* LOGO */}
             <div className="">
-                <h3>BOOKLY</h3>
+                <h3 className='text-xl font-bold text-gray-900'>Bookly</h3>
             </div>
 
             {/* MENU */}
-            <div className="flex items-center gap-4">
-                <Link href="/">
-                    <span className="cursor-pointer">Home</span>
-                </Link>
+            <div className="flex items-center gap-8 text-sm">
                 <Link href="/events">
                     <span className="cursor-pointer">Events</span>
                 </Link>
-                <Link href="/events">
+                <Link href="/#">
+                    <span className="cursor-pointer">About</span>
+                </Link>
+                <Link href="/#">
                     <span className="cursor-pointer">Contact</span>
                 </Link>
             </div>
@@ -48,14 +48,13 @@ const Navbar = () => {
             {/* AUTH BUTTONS */}
             <div className="flex items-center gap-2">
                 <div className=" mr-2">
-
                     <ModeToggle />
                 </div>
                 {loading ? (
                     // Show skeleton/placeholder while loading
                     <div className="flex items-center gap-2">
                         <div className="h-10 w-10 rounded-full bg-gray-100 animate-pulse" />
-                        <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
+                        {/* <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" /> */}
                     </div>
                 ) : user ? (
                     <DropdownMenu>
@@ -77,9 +76,9 @@ const Navbar = () => {
                                         : "U"}
                                 </AvatarFallback>
                             </Avatar>
-                            <span>{user.fullName || user.email}</span>
+                            {/* <span>{user.fullName || user.email}</span> */}
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent sideOffset={8}>
+                        <DropdownMenuContent sideOffset={10} align="end">
                             <DropdownMenuLabel>My Account</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <Link href="/profile">
@@ -110,11 +109,11 @@ const Navbar = () => {
                 ) : (
                     <div className="flex gap-2">
                         <Link href="/login">
-                            <Button>Login</Button>
+                            <Button className="font-semibold">Sign In</Button>
                         </Link>
-                        <Link href="/signup">
+                        {/* <Link href="/signup">
                             <Button variant="outline">Sign Up</Button>
-                        </Link>
+                        </Link> */}
                     </div>
                 )}
             </div>

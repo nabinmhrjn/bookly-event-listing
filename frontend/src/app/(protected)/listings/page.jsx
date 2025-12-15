@@ -28,8 +28,10 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const LitingPage = () => {
+    const router = useRouter()
     const { user } = useAuth();
     const [userEvents, setUserEvents] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -61,6 +63,14 @@ const LitingPage = () => {
             toast.error(errorMessage);
         }
     };
+
+    const handleListingDetail = (eventId) => {
+        console.log(eventId);
+
+        router.push(`/listings/${eventId}}`)
+    }
+
+
 
     return (
         <div className="bg-primary/5 pt-14 pb-16">
@@ -129,7 +139,7 @@ const LitingPage = () => {
                                         <TableCell className="text-right">2000</TableCell>
                                         <TableCell className="text-right">2000</TableCell> */}
                                         <TableCell className="flex justify-end gap-2">
-                                            <Button variant="outline">View</Button>
+                                            <Button variant="outline" onClick={() => handleListingDetail(item._id)}>View</Button>
                                             <Dialog>
                                                 <DialogTrigger asChild>
                                                     <Button variant="destructive">Delete</Button>

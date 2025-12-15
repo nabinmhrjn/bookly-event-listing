@@ -83,7 +83,7 @@ const Signup = () => {
     };
 
     return (
-        <div className="max-w-7xl mx-auto min-h-screen flex flex-col items-start justify-center">
+        <div className="max-w-5xl mx-auto min-h-screen flex flex-col items-start justify-center">
             <div className="mb-2">
                 <Button
                     variant="ghost"
@@ -94,7 +94,7 @@ const Signup = () => {
                     Back to Home
                 </Button>
             </div>
-            <div className="w-full flex items-center gap-20 overflow-hidden rounded-3xl drop-shadow-2xl">
+            <div className="w-full flex items-center gap-10 overflow-hidden rounded-3xl drop-shadow-2xl">
                 <div className="w-1/2">
                     <div className="relative w-full h-[600px]">
                         <Image
