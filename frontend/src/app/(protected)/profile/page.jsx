@@ -87,9 +87,9 @@ const UserProfilePage = () => {
         }
     }
     return (
-        <div className="bg-primary/5 pt-14 pb-16">
+        <div className="bg-secondary pt-14 pb-16">
             <div className="max-w-4xl mx-auto">
-                <div className="p-4 flex justify-between items-center">
+                <div className="p-4 flex justify-between items-center bg-white">
                     <div className="flex gap-4 items-center">
                         <div className="w-20 h-20 rounded-full relative overflow-hidden">
                             <Image
@@ -112,7 +112,7 @@ const UserProfilePage = () => {
             </div>
 
             <div className="max-w-4xl mx-auto mt-8">
-                <div className="p-4">
+                <div className="p-4 bg-white">
                     <div className="">
                         <p className="tet-lg font-bold">Personal Details</p>
                         <p className="text-xs text-primary/40">

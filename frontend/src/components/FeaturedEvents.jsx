@@ -20,14 +20,12 @@ const FeaturedEvents = () => {
     }, [])
 
     return (
-        <div className='w-full bg-[#F5F6F8]'>
+        <div className='pt-12'>
             <div className='max-w-7xl mx-auto pb-14'>
                 {/* Header */}
                 <div className='flex justify-between items-center mb-4'>
-                    <h2 className='text-2xl font-bold text-gray-900'>Featured Events</h2>
-                    <a href='#' className='text-blue-600 hover:text-blue-700 font-medium text-sm'>
-                        View all
-                    </a>
+                    <h2 className='text-2xl font-semibold text-slate-800'>Recommended Events</h2>
+                    <Button variant={'secondary'} className="text-sm text-slate-500 hover:text-slate-800 cursor-pointer">See all</Button>
                 </div>
 
                 {/* Events Grid */}

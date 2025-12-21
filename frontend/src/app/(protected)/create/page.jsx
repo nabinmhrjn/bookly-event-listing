@@ -192,9 +192,9 @@ const CreateEvent = () => {
     };
 
     return (
-        <div className="pt-14 pb-16">
+        <div className="pt-14 pb-16 bg-secondary">
             <div className="max-w-4xl mx-auto">
-                <div className="pb-10">
+                <div className="bg-white p-8 shadow-md">
                     <p className="text-2xl font-bold">Create a New Event</p>
                     <p className="text-sm text-primary/40">
                         Fill in the details below to list your event on Bookly
@@ -203,7 +203,7 @@ const CreateEvent = () => {
 
                 {/* FORM */}
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+                    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 bg-white p-6">
                         {/* EVENT DETAILS */}
                         <div className="w-full mx-auto p-4">
                             <p className="text-xl font-bold pb-2">Event Details</p>

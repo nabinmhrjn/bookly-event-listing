@@ -146,14 +146,15 @@ const EventPage = () => {
     };
 
     return (
-        <div className="py-5">
+        <div className="py-5 bg-secondary">
             <div className="max-w-7xl mx-auto">
                 <div className="pb-2">
                     <p className=" text-lg font-bold">Filters</p>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-6">
+
                     {/* LEFT SECTION */}
-                    <div className="w-[20%] p-4 h-[430px]">
+                    <div className="w-[20%] p-4 h-[430px] bg-white">
                         <p className="font-bold">Category</p>
 
                         {/* RADIO GROUP */}
@@ -229,7 +230,7 @@ const EventPage = () => {
                             </div>
                         ) : (
                             <>
-                                <div className="grid grid-cols-3 gap-4">
+                                <div className="grid grid-cols-3 gap-2">
                                     {eventList.length > 0 ? eventList.map((item) => (
                                         <Link href={`/events/${item._id}`} key={item._id}>
                                             <EventCard item={item} />

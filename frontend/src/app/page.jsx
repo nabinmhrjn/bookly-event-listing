@@ -6,9 +6,8 @@ import Hero from '@/components/Hero'
 
 const Homepage = () => {
   return (
-    <div>
+    <div className='bg-secondary'>
       <Hero />
-      {/* <EventCard title="Upcoming Events You Can't Miss" limit={3} /> */}
       {/* <EasySteps /> */}
       <FeaturedEvents />
       {/* <CategoryBrowse /> */}
