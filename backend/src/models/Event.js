@@ -39,11 +39,11 @@ const eventSchema = new mongoose.Schema(
             required: true
         },
         startTime: {
-            type: String, // Keep as String for HH:MM format
+            type: String,
             required: true
         },
         endTime: {
-            type: String, // Keep as String for HH:MM format
+            type: String,
             required: true
         },
         eventOrganizer: {
@@ -51,6 +51,10 @@ const eventSchema = new mongoose.Schema(
             ref: 'User',
             required: false
         },
+        eventImage: {
+            type: String,
+            required: true
+        }
     },
     { timestamps: true }
 );

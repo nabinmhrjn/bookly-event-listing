@@ -1,6 +1,7 @@
 import express from "express";
 import { createEvent, deleteEvent, getAllEvents, getEventById, getEventByUserId, updateEvent } from "../controllers/eventsControllers.js";
 import { validateToken } from "../middleware/validateToken.js";
+import { eventImageUpload } from "../middleware/eventImageUpload.js";
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ router.get("/:id", getEventById)
 
 //protected routes
 router.use(validateToken)
-router.post("/", createEvent);
+router.post("/", eventImageUpload, createEvent);
 router.get("/user/:id", getEventByUserId)
 router.put("/:id", updateEvent)
 router.delete("/:id", deleteEvent)

@@ -4,17 +4,11 @@ import { getDateRange } from "../utils/dateConfig.js";
 
 export async function createEvent(req, res) {
     try {
-        const {
-            eventName,
-            eventDescription,
-            eventCategory,
-            eventVenue,
-            eventAddress,
-            startDate,
-            endDate,
-            startTime,
-            endTime,
-        } = req.body;
+        const { eventName, eventDescription, eventCategory, eventVenue, eventAddress, startDate, endDate, startTime, endTime } = req.body;
+        if (req.file) {
+            req.body.eventImage = req.file.filename
+        }
+
         const event = new Event({
             eventOrganizer: req.user.id,
             eventName,
@@ -26,6 +20,7 @@ export async function createEvent(req, res) {
             endDate,
             startTime,
             endTime,
+            eventImage: req.body.eventImage
         });
 
         const savedEvent = await event.save();
