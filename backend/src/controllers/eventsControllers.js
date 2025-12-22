@@ -1,12 +1,48 @@
 import Event from "../models/Event.js";
 import User from "../models/User.js";
+import cloudinary from "../config/cloudinary.js";
 import { getDateRange } from "../utils/dateConfig.js";
+import fs from "fs";
 
 export async function createEvent(req, res) {
     try {
         const { eventName, eventDescription, eventCategory, eventVenue, eventAddress, startDate, endDate, startTime, endTime } = req.body;
-        if (req.file) {
-            req.body.eventImage = req.file.filename
+
+        // Check if file was uploaded
+        if (!req.file) {
+            return res.status(400).json({
+                message: "Event image is required. Please upload an image file."
+            });
+        }
+
+        let imageUrl;
+
+        try {
+            // Upload the file to Cloudinary using the file path from multer
+            const uploadResponse = await cloudinary.uploader.upload(req.file.path, {
+                folder: "bookly-events",
+                resource_type: "image",
+                allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+                transformation: [
+                    { width: 1200, height: 800, crop: 'limit' },
+                    { quality: 'auto' }
+                ]
+            });
+            imageUrl = uploadResponse.secure_url;
+
+            // Delete the temporary file after successful upload
+            fs.unlinkSync(req.file.path);
+        } catch (uploadError) {
+            console.error("Cloudinary upload error:", uploadError);
+
+            // Clean up the temporary file even if upload fails
+            if (req.file && fs.existsSync(req.file.path)) {
+                fs.unlinkSync(req.file.path);
+            }
+
+            return res.status(400).json({
+                message: "Failed to upload image. Please ensure it's a valid image file."
+            });
         }
 
         const event = new Event({
@@ -20,7 +56,7 @@ export async function createEvent(req, res) {
             endDate,
             startTime,
             endTime,
-            eventImage: req.body.eventImage
+            eventImage: imageUrl
         });
 
         const savedEvent = await event.save();

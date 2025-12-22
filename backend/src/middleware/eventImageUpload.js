@@ -1,11 +1,19 @@
 import multer from "multer";
+import path from "path";
+import fs from "fs";
+
+// Ensure upload directory exists
+const uploadDir = "uploads/eventImage";
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, "../backend/uploads/eventImage");
+        cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + file.originalname);
+        cb(null, Date.now() + "-" + file.originalname);
     },
 });
 
@@ -27,9 +35,7 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-const limits = {
-    fileSize: 4 * 1024 * 1024, // 2MB limit
-};
+const limits = { fileSize: 4 * 1024 * 1024 };
 
 const upload = multer({
     storage: storage,
