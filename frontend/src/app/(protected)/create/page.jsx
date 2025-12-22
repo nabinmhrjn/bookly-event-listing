@@ -49,6 +49,7 @@ const formSchema = z.object({
 
     startTime: z.string().min(1, "Event start time is required"),
     endTime: z.string().min(1, "Event end time is required"),
+    eventImage: z.string().min(1, "Event Flyer is required")
 
 }).refine((data) => {
     // Only validate if start date/time fields are filled
@@ -104,7 +105,8 @@ const CreateEvent = () => {
             startDate: "",
             endDate: "",
             startTime: "",
-            endTime: ""
+            endTime: "",
+            eventImage: ""
         },
     });
 
@@ -605,6 +607,39 @@ const CreateEvent = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* image upload */}
+                        <div className="w-full mx-auto p-4">
+                            <p className="text-xl font-bold pb-2">Upload Flyer</p>
+                            <div className="bg-black/10 h-0.5"></div>
+                            <div className="mt-8 flex items-center w-full gap-4">
+                                <div className="w-full">
+                                    <FormField
+                                        control={form.control}
+                                        name="eventImage"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Event Flyer
+                                                    <span className="text-red-500 font-bold">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="e.g The Grand Concert Hall"
+                                                        {...field}
+                                                        type="file"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                            </div>
+                        </div>
+
+
 
                         <Button className="w-full" type="submit">
                             Publish Event
