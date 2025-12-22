@@ -8,7 +8,7 @@ const EventCard = ({ item }) => {
     return (
         <Card>
             <div className="relative w-full h-[350px] overflow-hidden rounded-[5px">
-                <Image src="/test.jpeg" width={500} height={500} alt="Picture of the author" loading="eager" className="absolute w-full h-full object-cover" />
+                <Image src={item.eventImage || "/test.jpeg"} width={500} height={500} alt={item.eventName || "Event image"} loading="eager" className="absolute w-full h-full object-cover" />
             </div>
             <CardHeader>
                 <CardTitle className="text-lg font-semibold">{item.eventName}</CardTitle>

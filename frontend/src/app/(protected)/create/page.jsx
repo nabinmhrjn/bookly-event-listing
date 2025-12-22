@@ -49,7 +49,7 @@ const formSchema = z.object({
 
     startTime: z.string().min(1, "Event start time is required"),
     endTime: z.string().min(1, "Event end time is required"),
-    eventImage: z.string().min(1, "Event Flyer is required")
+    eventImage: z.any().refine((file) => file instanceof File, "Event Flyer is required")
 
 }).refine((data) => {
     // Only validate if start date/time fields are filled
@@ -106,25 +106,45 @@ const CreateEvent = () => {
             endDate: "",
             startTime: "",
             endTime: "",
-            eventImage: ""
+            eventImage: null
         },
     });
 
     const handleSubmit = async (values) => {
         setLoading(true);
         try {
-            const response = await api.post("/events", values);
+            // Create FormData for multipart/form-data submission
+            const formData = new FormData();
+            formData.append('eventName', values.eventName);
+            formData.append('eventDescription', values.eventDescription);
+            formData.append('eventCategory', values.eventCategory);
+            formData.append('eventVenue', values.eventVenue);
+            formData.append('eventAddress', values.eventAddress);
+            formData.append('startDate', values.startDate);
+            formData.append('endDate', values.endDate);
+            formData.append('startTime', values.startTime);
+            formData.append('endTime', values.endTime);
+            formData.append('eventImage', values.eventImage);
+
+            const response = await api.post("/events", formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
 
             console.log("Event created successfully:", response.data);
-
 
             form.reset();
             setStartDate(null);
             setEndDate(null);
-
+            setStartHour("");
+            setStartMinute("");
+            setStartPeriod("");
+            setEndHour("");
+            setEndMinute("");
+            setEndPeriod("");
 
             toast.success("Event created successfully!");
-
 
             // router.push(`/events/${response.data.event._id}`);
         } catch (error) {
@@ -617,7 +637,7 @@ const CreateEvent = () => {
                                     <FormField
                                         control={form.control}
                                         name="eventImage"
-                                        render={({ field }) => (
+                                        render={({ field: { value, onChange, ...field } }) => (
                                             <FormItem>
                                                 <FormLabel>
                                                     Event Flyer
@@ -625,11 +645,25 @@ const CreateEvent = () => {
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input
-                                                        placeholder="e.g The Grand Concert Hall"
                                                         {...field}
                                                         type="file"
+                                                        accept="image/jpeg,image/png"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (file) {
+                                                                onChange(file);
+                                                            } else {
+                                                                onChange(null);
+                                                            }
+                                                        }}
+                                                        value={undefined}
                                                     />
                                                 </FormControl>
+                                                {value && (
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Selected: {value.name}
+                                                    </p>
+                                                )}
                                                 <FormMessage />
                                             </FormItem>
                                         )}
