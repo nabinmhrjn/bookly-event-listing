@@ -8,9 +8,10 @@ const Homepage = () => {
   return (
     <div className='bg-secondary'>
       <Hero />
-      {/* <EasySteps /> */}
       <FeaturedEvents />
       {/* <CategoryBrowse /> */}
+      {/* <FeaturedEvents /> */}
+      {/* <EasySteps /> */}
     </div>
   )
 }

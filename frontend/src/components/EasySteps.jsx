@@ -25,7 +25,7 @@ const easyStep = [
 
 const EasySteps = () => {
     return (
-        <div className='bg-primary/20 py-10'>
+        <div className='bg-white py-10'>
             <div className="max-w-7xl mx-auto">
                 <div className="w-full flex flex-col items-center py-4">
                     <h3 className="font-bold text-3xl">Booking Tickets in 3 Easy Steps</h3>

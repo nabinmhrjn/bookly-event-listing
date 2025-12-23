@@ -41,15 +41,13 @@ const formSchema = z.object({
     eventCategory: z.string().min(1, "Event Category is required."),
     eventVenue: z.string().min(1, "Event venue is required"),
     eventAddress: z.string().min(1, "Event address is required"),
-
-
     startDate: z.string().min(1, "Event start date is required"),
     endDate: z.string().min(1, "Event end date is required"),
-
-
     startTime: z.string().min(1, "Event start time is required"),
     endTime: z.string().min(1, "Event end time is required"),
-    eventImage: z.any().refine((file) => file instanceof File, "Event Flyer is required")
+    eventImage: z.any().refine((file) => file instanceof File, "Event Flyer is required"),
+    generalTicket: z.string().min(1, "Event general ticket price is required"),
+    vipTicket: z.string().min(1, "Event vip ticket section is required")
 
 }).refine((data) => {
     // Only validate if start date/time fields are filled
@@ -106,7 +104,9 @@ const CreateEvent = () => {
             endDate: "",
             startTime: "",
             endTime: "",
-            eventImage: null
+            eventImage: null,
+            generalTicket: "",
+            vipTicket: ""
         },
     });
 
@@ -125,6 +125,8 @@ const CreateEvent = () => {
             formData.append('startTime', values.startTime);
             formData.append('endTime', values.endTime);
             formData.append('eventImage', values.eventImage);
+            formData.append('generalTicket', values.generalTicket);
+            formData.append('vipTicket', values.vipTicket);
 
             const response = await api.post("/events", formData, {
                 headers: {
@@ -617,6 +619,56 @@ const CreateEvent = () => {
                                                 <FormControl>
                                                     <Input
                                                         placeholder="123 Music Lane, Nashville, TN"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* TICKET PRICE */}
+                        <div className="w-full mx-auto p-4">
+                            <p className="text-xl font-bold pb-2">Ticket Price</p>
+                            <div className="bg-black/10 h-0.5"></div>
+                            <div className="mt-8 flex items-center w-full gap-4">
+                                <div className="w-1/2">
+                                    <FormField
+                                        control={form.control}
+                                        name="generalTicket"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    General Admission
+                                                    <span className="text-red-500 font-bold">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Rs.1000"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div className="w-1/2">
+                                    <FormField
+                                        control={form.control}
+                                        name="vipTicket"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    VIP Pass
+                                                    <span className="text-red-500 font-bold">*</span>
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Rs.1500"
                                                         {...field}
                                                     />
                                                 </FormControl>

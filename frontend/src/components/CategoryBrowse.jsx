@@ -72,8 +72,8 @@ const CategoryBrowse = () => {
 
     return (
         <div className='w-full bg-[#F5F6F8]'>
-            <div className='max-w-6xl mx-auto pb-14'>
-                <h2 className='text-2xl font-bold text-gray-900 mb-4'>Browse by Category</h2>
+            <div className='max-w-7xl mx-auto pb-14'>
+                <h2 className='text-2xl font-bold text-gray-900 mb-4'>Browse Events</h2>
 
                 <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-4'>
                     {categories.map((category, index) => {
