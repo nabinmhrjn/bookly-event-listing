@@ -6,8 +6,7 @@ import fs from "fs";
 
 export async function createEvent(req, res) {
     try {
-        const { eventName, eventDescription, eventCategory, eventVenue, eventAddress, startDate, endDate, startTime, endTime } = req.body;
-
+        const { eventName, eventDescription, eventCategory, eventVenue, eventAddress, startDate, endDate, startTime, endTime, generalTicket, vipTicket } = req.body;
         // Check if file was uploaded
         if (!req.file) {
             return res.status(400).json({
@@ -56,7 +55,9 @@ export async function createEvent(req, res) {
             endDate,
             startTime,
             endTime,
-            eventImage: imageUrl
+            eventImage: imageUrl,
+            generalTicket,
+            vipTicket
         });
 
         const savedEvent = await event.save();

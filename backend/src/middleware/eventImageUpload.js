@@ -49,7 +49,7 @@ export const eventImageUpload = (req, res, next) => {
             let errorMessage = "Error processing file upload";
 
             if (err.code === "LIMIT_FILE_SIZE") {
-                errorMessage = "File size exceeds the allowed limit of 2MB";
+                errorMessage = "File size exceeds the allowed limit of 4MB";
             } else if (err.code === "LIMIT_UNEXPECTED_FILE") {
                 errorMessage = "Too many files uploaded or invalid field name";
             } else if (err.code === "LIMIT_FILE_TYPE") {

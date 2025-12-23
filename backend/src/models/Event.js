@@ -54,6 +54,14 @@ const eventSchema = new mongoose.Schema(
         eventImage: {
             type: String,
             required: true
+        },
+        generalTicket: {
+            type: String,
+            required: true
+        },
+        vipTicket: {
+            type: String,
+            required: true
         }
     },
     { timestamps: true }
