@@ -27,11 +27,19 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, EditIcon, MapPin, Ticket, Clock, Upload, Trash } from "lucide-react";
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import api from "@/lib/axios";
 import { toast } from "sonner"
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Controller } from "react-hook-form";
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { Label } from "@/components/ui/label"
+import Tiptap from "@/components/TipTap";
+
+
 
 const formSchema = z.object({
     eventName: z.string().min(1, "Event name is required.").min(2, {
@@ -83,6 +91,7 @@ const CreateEvent = () => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [ticketType, setTicketType] = useState([])
 
     // Time component states
     const [startHour, setStartHour] = useState("");
@@ -215,523 +224,203 @@ const CreateEvent = () => {
         }
     };
 
+
+    const handleAddTicketType = () => {
+        setTicketType([...ticketType, { id: Date.now(), name: '', price: '', quantity: '' }])
+    }
+
+    const handleRemoveTicketType = (id) => {
+        setTicketType(ticketType.filter(ticket => ticket.id !== id))
+    }
+
     return (
         <div className="pt-14 pb-16 bg-secondary">
             <div className="max-w-4xl mx-auto">
-                <div className="bg-white p-8 shadow-md">
-                    <p className="text-2xl font-bold">Create a New Event</p>
+                <div className="mb-8">
+                    <p className="text-2xl font-bold">Create New Event</p>
                     <p className="text-sm text-primary/40">
-                        Fill in the details below to list your event on Bookly
+                        Fill in the details below to launch your new event listing
                     </p>
                 </div>
 
                 {/* FORM */}
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 bg-white p-6">
-                        {/* EVENT DETAILS */}
-                        <div className="w-full mx-auto p-4">
-                            <p className="text-xl font-bold pb-2">Event Details</p>
-                            <div className="bg-black/10 h-0.5"></div>
-                            <div className="mt-8 space-y-4">
-                                <FormField
-                                    control={form.control}
-                                    name="eventName"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Event Name
-                                                <span className="text-red-500 font-bold">*</span>
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Enter the name of your event"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                <form onSubmit={form.handleSubmit()}>
 
-                                <FormField
-                                    control={form.control}
-                                    name="eventDescription"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Event Description
-                                                <span className="text-red-500 font-bold">*</span>
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Textarea
-                                                    placeholder="Type your message here."
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <div className="mt-4 flex justify-between items-center">
-                                    {/* <FormField
-                                        control={form.control}
-                                        name="eventFlyer"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Event Flyer
-                                                    <span className="text-red-500 font-bold">*</span>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder="Enter the name of your event"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    /> */}
-                                    <FormField
-                                        control={form.control}
-                                        name="eventCategory"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Category
-                                                    <span className="text-red-500 font-bold">*</span>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Select value={field.value} onValueChange={field.onChange}>
-                                                        <SelectTrigger className="w-[280px]">
-                                                            <SelectValue placeholder="Select Event Category" {...field} />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="live-concert">Live Concerts</SelectItem>
-                                                            <SelectItem value="technology-innovation">Technology & Innovation</SelectItem>
-                                                            <SelectItem value="business-marketing">Business & Networking</SelectItem>
-                                                            <SelectItem value="sports-event">Sports Events</SelectItem>
-                                                            <SelectItem value="comedy-show">Comedy Shows</SelectItem>
-                                                            <SelectItem value="other">Other</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
+                    <div className="space-y-6">
+                        {/* ------------------ EVENT DETAILS --------------- */}
+                        <div className="bg-white p-6 shadow-sm">
+                            <div className="flex gap-2 items-center mb-4">
+                                <EditIcon />
+                                <h3 className="text-2xl font-semibold text-slate-700">Event Details</h3>
                             </div>
-                        </div>
+                            <FieldGroup>
+                                <Controller name="eventName" control={form.control} render={({ field, fieldState }) => (
+                                    <Field>
 
-                        {/* DATE & TIME */}
-                        <div className="w-full mx-auto p-4">
-                            <p className="text-xl font-bold pb-2">Date & Time</p>
-                            <div className="bg-black/10 h-0.5"></div>
-                            <div className="mt-8 flex items-center gap-4">
-
-                                {/* START DATE */}
-                                <div className="w-1/2">
-                                    <FormField
-                                        control={form.control}
-                                        name="startDate"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Start Date & Time
-                                                    <span className="text-red-500 font-bold">*</span>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <div className="flex gap-2">
-                                                        <div className="flex flex-col gap-3">
-                                                            <Popover
-                                                                open={startOpen}
-                                                                onOpenChange={setStartOpen}
-                                                            >
-                                                                <PopoverTrigger asChild>
-                                                                    <Button
-                                                                        variant="outline"
-                                                                        id="date-picker"
-                                                                        className="font-normal"
-                                                                    >
-                                                                        {field.value
-                                                                            ? new Date(field.value + 'T00:00:00').toLocaleDateString()
-                                                                            : "Select date"}
-                                                                        <ChevronDownIcon />
-                                                                    </Button>
-                                                                </PopoverTrigger>
-                                                                <PopoverContent
-                                                                    className="w-auto overflow-hidden p-0"
-                                                                    align="start"
-                                                                >
-                                                                    <Calendar
-                                                                        mode="single"
-                                                                        selected={field.value ? parseDate(field.value) : undefined}
-                                                                        captionLayout="dropdown"
-                                                                        disabled={(date) => {
-                                                                            const today = new Date();
-                                                                            today.setHours(0, 0, 0, 0);
-                                                                            return date < today;
-                                                                        }}
-                                                                        onSelect={(date) => {
-                                                                            if (date) {
-                                                                                setStartDate(date);
-                                                                                const formattedDate = formatDate(date);
-                                                                                field.onChange(formattedDate);
-                                                                                setStartOpen(false);
-                                                                            }
-                                                                        }}
-                                                                    />
-                                                                </PopoverContent>
-                                                            </Popover>
-                                                        </div>
-                                                        <div className="flex gap-2">
-                                                            {/* Hour Select */}
-                                                            <Select
-                                                                value={startHour}
-                                                                onValueChange={(value) => {
-                                                                    setStartHour(value);
-                                                                    updateStartTime(value, startMinute, startPeriod);
-                                                                }}
-                                                            >
-                                                                <SelectTrigger className="w-20">
-                                                                    <SelectValue placeholder="HH" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
-                                                                        <SelectItem key={hour} value={String(hour)}>
-                                                                            {String(hour).padStart(2, '0')}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectContent>
-                                                            </Select>
-
-                                                            <span className="flex items-center">:</span>
-
-                                                            {/* Minute Select */}
-                                                            <Select
-                                                                value={startMinute}
-                                                                onValueChange={(value) => {
-                                                                    setStartMinute(value);
-                                                                    updateStartTime(startHour, value, startPeriod);
-                                                                }}
-                                                            >
-                                                                <SelectTrigger className="w-20">
-                                                                    <SelectValue placeholder="MM" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
-                                                                        <SelectItem key={minute} value={String(minute).padStart(2, '0')}>
-                                                                            {String(minute).padStart(2, '0')}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectContent>
-                                                            </Select>
-
-                                                            {/* AM/PM Select */}
-                                                            <Select
-                                                                value={startPeriod}
-                                                                onValueChange={(value) => {
-                                                                    setStartPeriod(value);
-                                                                    updateStartTime(startHour, startMinute, value);
-                                                                }}
-                                                            >
-                                                                <SelectTrigger className="w-20">
-                                                                    <SelectValue placeholder="AM" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectItem value="AM">AM</SelectItem>
-                                                                    <SelectItem value="PM">PM</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </div>
-                                                    </div>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
+                                        <FieldLabel>Event Name</FieldLabel>
+                                        <Input aria-invalid={fieldState.invalid} placeholder="John Doe" {...field} />
+                                        {fieldState.invalid && (
+                                            <FieldError errors={[fieldState.error]} />
                                         )}
-                                    />
-                                </div>
+                                    </Field>
+                                )} />
 
-                                {/* END DATE */}
-                                <div className="w-1/2">
-                                    <FormField
-                                        control={form.control}
-                                        name="endDate"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    End Date & Time
-                                                    <span className="text-red-500 font-bold">*</span>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <div className="flex gap-2">
-                                                        <div className="flex flex-col gap-3">
-                                                            <Popover
-                                                                open={endOpen}
-                                                                onOpenChange={setEndOpen}
-                                                            >
-                                                                <PopoverTrigger asChild>
-                                                                    <Button
-                                                                        variant="outline"
-                                                                        id="date-picker"
-                                                                        className="font-normal"
-                                                                    >
-                                                                        {field.value
-                                                                            ? new Date(field.value + 'T00:00:00').toLocaleDateString()
-                                                                            : "Select date"}
-                                                                        <ChevronDownIcon />
-                                                                    </Button>
-                                                                </PopoverTrigger>
-                                                                <PopoverContent
-                                                                    className="w-auto overflow-hidden p-0"
-                                                                    align="start"
-                                                                >
-                                                                    <Calendar
-                                                                        mode="single"
-                                                                        selected={field.value ? parseDate(field.value) : undefined}
-                                                                        captionLayout="dropdown"
-                                                                        disabled={(date) => {
-                                                                            const today = new Date();
-                                                                            today.setHours(0, 0, 0, 0);
-                                                                            return date < today;
-                                                                        }}
-                                                                        onSelect={(date) => {
-                                                                            if (date) {
-                                                                                setEndDate(date);
-                                                                                const formattedDate = formatDate(date);
-                                                                                field.onChange(formattedDate);
-                                                                                setEndOpen(false);
-                                                                            }
-                                                                        }}
-                                                                    />
-                                                                </PopoverContent>
-                                                            </Popover>
-                                                        </div>
-                                                        <div className="flex gap-2">
-                                                            {/* Hour Select */}
-                                                            <Select
-                                                                value={endHour}
-                                                                onValueChange={(value) => {
-                                                                    setEndHour(value);
-                                                                    updateEndTime(value, endMinute, endPeriod);
-                                                                }}
-                                                            >
-                                                                <SelectTrigger className="w-20">
-                                                                    <SelectValue placeholder="HH" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
-                                                                        <SelectItem key={hour} value={String(hour)}>
-                                                                            {String(hour).padStart(2, '0')}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectContent>
-                                                            </Select>
-
-                                                            <span className="flex items-center">:</span>
-
-                                                            {/* Minute Select */}
-                                                            <Select
-                                                                value={endMinute}
-                                                                onValueChange={(value) => {
-                                                                    setEndMinute(value);
-                                                                    updateEndTime(endHour, value, endPeriod);
-                                                                }}
-                                                            >
-                                                                <SelectTrigger className="w-20">
-                                                                    <SelectValue placeholder="MM" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
-                                                                        <SelectItem key={minute} value={String(minute).padStart(2, '0')}>
-                                                                            {String(minute).padStart(2, '0')}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectContent>
-                                                            </Select>
-
-                                                            {/* AM/PM Select */}
-                                                            <Select
-                                                                value={endPeriod}
-                                                                onValueChange={(value) => {
-                                                                    setEndPeriod(value);
-                                                                    updateEndTime(endHour, endMinute, value);
-                                                                }}
-                                                            >
-                                                                <SelectTrigger className="w-20">
-                                                                    <SelectValue placeholder="AM" />
-                                                                </SelectTrigger>
-                                                                <SelectContent>
-                                                                    <SelectItem value="AM">AM</SelectItem>
-                                                                    <SelectItem value="PM">PM</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </div>
-                                                    </div>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
+                                <Controller name="eventDescription" control={form.control} render={({ field, fieldState }) => (
+                                    <Field>
+                                        <FieldLabel>Event Description</FieldLabel>
+                                        <Input aria-invalid={fieldState.invalid} placeholder="John Doe" {...field} />
+                                        {fieldState.invalid && (
+                                            <FieldError errors={[fieldState.error]} />
                                         )}
-                                    />
-                                </div>
+                                    </Field>
+                                )} />
 
-                            </div>
-                        </div>
-
-                        {/* LOCATION */}
-                        <div className="w-full mx-auto p-4">
-                            <p className="text-xl font-bold pb-2">Location</p>
-                            <div className="bg-black/10 h-0.5"></div>
-                            <div className="mt-8 flex items-center w-full gap-4">
-                                <div className="w-1/2">
-                                    <FormField
-                                        control={form.control}
-                                        name="eventVenue"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Venue Name
-                                                    <span className="text-red-500 font-bold">*</span>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder="e.g The Grand Concert Hall"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                                <div className="w-1/2">
-                                    <FormField
-                                        control={form.control}
-                                        name="eventAddress"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Address
-                                                    <span className="text-red-500 font-bold">*</span>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder="123 Music Lane, Nashville, TN"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* TICKET PRICE */}
-                        <div className="w-full mx-auto p-4">
-                            <p className="text-xl font-bold pb-2">Ticket Price</p>
-                            <div className="bg-black/10 h-0.5"></div>
-                            <div className="mt-8 flex items-center w-full gap-4">
-                                <div className="w-1/2">
-                                    <FormField
-                                        control={form.control}
-                                        name="generalTicket"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    General Admission
-                                                    <span className="text-red-500 font-bold">*</span>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder="Rs.1000"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                                <div className="w-1/2">
-                                    <FormField
-                                        control={form.control}
-                                        name="vipTicket"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    VIP Pass
-                                                    <span className="text-red-500 font-bold">*</span>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        placeholder="Rs.1500"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* image upload */}
-                        <div className="w-full mx-auto p-4">
-                            <p className="text-xl font-bold pb-2">Upload Flyer</p>
-                            <div className="bg-black/10 h-0.5"></div>
-                            <div className="mt-8 flex items-center w-full gap-4">
-                                <div className="w-full">
-                                    <FormField
-                                        control={form.control}
-                                        name="eventImage"
-                                        render={({ field: { value, onChange, ...field } }) => (
-                                            <FormItem>
-                                                <FormLabel>
-                                                    Event Flyer
-                                                    <span className="text-red-500 font-bold">*</span>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        type="file"
-                                                        accept="image/jpeg,image/png"
-                                                        onChange={(e) => {
-                                                            const file = e.target.files?.[0];
-                                                            if (file) {
-                                                                onChange(file);
-                                                            } else {
-                                                                onChange(null);
-                                                            }
-                                                        }}
-                                                        value={undefined}
-                                                    />
-                                                </FormControl>
-                                                {value && (
-                                                    <p className="text-sm text-muted-foreground">
-                                                        Selected: {value.name}
-                                                    </p>
+                                <div className="flex w-full gap-4">
+                                    <div className="w-1/2">
+                                        <Controller name="eventCategory" control={form.control} render={({ field, fieldState }) => (
+                                            <Field>
+                                                <FieldLabel>Event Category</FieldLabel>
+                                                <Select value={field.value} onValueChange={field.onChange} {...field}>
+                                                    <SelectTrigger className="w-[280px]">
+                                                        <SelectValue placeholder="Select Event Category" {...field} />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="live-concert">Live Concerts</SelectItem>
+                                                        <SelectItem value="technology-innovation">Technology & Innovation</SelectItem>
+                                                        <SelectItem value="business-marketing">Business & Networking</SelectItem>
+                                                        <SelectItem value="sports-event">Sports Events</SelectItem>
+                                                        <SelectItem value="comedy-show">Comedy Shows</SelectItem>
+                                                        <SelectItem value="other">Other</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                {fieldState.invalid && (
+                                                    <FieldError errors={[fieldState.error]} />
                                                 )}
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+                                            </Field>
+                                        )} />
+                                    </div>
                                 </div>
 
-                            </div>
+                            </FieldGroup>
                         </div>
 
+                        {/* ------------------  LOCATION --------------- */}
+                        <div className="bg-white p-6 shadow-md">
+                            <div className="flex gap-2 items-center mb-4">
+                                <MapPin />
+                                <h3 className="text-2xl font-semibold text-slate-700">Location</h3>
+                            </div>
+                            <FieldGroup>
+                                <Controller name="eventVenue" control={form.control} render={({ field, fieldState }) => (
+                                    <Field>
+                                        <FieldLabel>Venue Name</FieldLabel>
+                                        <Input aria-invalid={fieldState.invalid} placeholder="John Doe" {...field} />
+                                        {fieldState.invalid && (
+                                            <FieldError errors={[fieldState.error]} />
+                                        )}
+                                    </Field>
+                                )} />
 
 
-                        <Button className="w-full" type="submit">
-                            Publish Event
-                        </Button>
-                    </form>
-                </Form>
+                                <div className="flex w-full gap-4">
+                                    <Controller name="eventAddress" control={form.control} render={({ field, fieldState }) => (
+                                        <Field>
+                                            <FieldLabel>Address</FieldLabel>
+                                            <Input aria-invalid={fieldState.invalid} placeholder="Live-Concert" {...field} />
+                                            {fieldState.invalid && (
+                                                <FieldError errors={[fieldState.error]} />
+                                            )}
+                                        </Field>
+                                    )} />
+                                </div>
+                            </FieldGroup>
+                        </div>
+
+                        {/* ------------------  TICKETS --------------- */}
+                        <div className="bg-white p-6 shadow-md ">
+                            <div className="flex items-center justify-between">
+                                <div className="flex gap-2 items-center mb-4">
+                                    <Ticket />
+                                    <h3 className="text-2xl font-semibold text-slate-700">Tickets</h3>
+                                </div>
+                                <div>
+                                    <Button onClick={handleAddTicketType} type="button">+ Add Ticket Type</Button>
+                                </div>
+                            </div>
+
+                            {/* Ticket Type Components */}
+                            {
+                                ticketType.length > 0 ? ticketType.map((ticket, index) => (
+                                    <div key={ticket.id} className="bg-slate-200/30 p-4 grid grid-cols-8 gap-2 border mb-6">
+                                        <div className="col-span-6">
+                                            <Field>
+                                                <FieldLabel>Ticket Name</FieldLabel>
+                                                <Input
+                                                    placeholder="General Admission"
+                                                    value={ticket.name}
+                                                    onChange={(e) => {
+                                                        const updated = [...ticketType];
+                                                        updated[index].name = e.target.value;
+                                                        setTicketType(updated);
+                                                    }}
+                                                />
+                                            </Field>
+                                        </div>
+                                        <div>
+                                            <Field>
+                                                <FieldLabel>Price</FieldLabel>
+                                                <Input
+                                                    placeholder="2000"
+                                                    value={ticket.price}
+                                                    onChange={(e) => {
+                                                        const updated = [...ticketType];
+                                                        updated[index].price = e.target.value;
+                                                        setTicketType(updated);
+                                                    }}
+                                                />
+                                            </Field>
+                                        </div>
+
+                                        {/* WILL PUT QUANTITY LATER ON */}
+                                        {/* <div>
+                                            <Field>
+                                                <FieldLabel>Quantity</FieldLabel>
+                                                <Input
+                                                    placeholder="200"
+                                                    value={ticket.quantity}
+                                                    onChange={(e) => {
+                                                        const updated = [...ticketType];
+                                                        updated[index].quantity = e.target.value;
+                                                        setTicketType(updated);
+                                                    }}
+                                                />
+                                            </Field>
+                                        </div> */}
+
+                                        <div>
+                                            <Field>
+                                                <FieldLabel>Delete</FieldLabel>
+                                                <Button
+                                                    variant="outline"
+                                                    type="button"
+                                                    onClick={() => handleRemoveTicketType(ticket.id)}
+                                                >
+                                                    <Trash className="text-red-400" size={20} />
+                                                </Button>
+                                            </Field>
+                                        </div>
+                                    </div>
+                                )) :
+                                    <div className="text-center">
+                                        <span className="text-sm text-slate-500">You should have at least one ticket type</span>
+                                    </div>
+                            }
+                        </div>
+                    </div>
+
+
+                </form>
+
             </div>
         </div>
     );
