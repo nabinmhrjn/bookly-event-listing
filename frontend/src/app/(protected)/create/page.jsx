@@ -54,8 +54,8 @@ const formSchema = z.object({
     startTime: z.string().min(1, "Event start time is required"),
     endTime: z.string().min(1, "Event end time is required"),
     eventImage: z.any().refine((file) => file instanceof File, "Event Flyer is required"),
-    generalTicket: z.string().min(1, "Event general ticket price is required"),
-    vipTicket: z.string().min(1, "Event vip ticket section is required")
+    // generalTicket: z.string().min(1, "Event general ticket price is required"),
+    // vipTicket: z.string().min(1, "Event vip ticket section is required")
 
 }).refine((data) => {
     // Only validate if start date/time fields are filled
@@ -92,6 +92,8 @@ const CreateEvent = () => {
     const [endDate, setEndDate] = useState(null);
     const [loading, setLoading] = useState(false);
     const [ticketType, setTicketType] = useState([])
+    const [imagePreview, setImagePreview] = useState(null);
+    const [imageUploading, setImageUploading] = useState(false);
 
     // Time component states
     const [startHour, setStartHour] = useState("");
@@ -114,8 +116,8 @@ const CreateEvent = () => {
             startTime: "",
             endTime: "",
             eventImage: null,
-            generalTicket: "",
-            vipTicket: ""
+            // generalTicket: "",
+            // vipTicket: ""
         },
     });
 
@@ -134,8 +136,8 @@ const CreateEvent = () => {
             formData.append('startTime', values.startTime);
             formData.append('endTime', values.endTime);
             formData.append('eventImage', values.eventImage);
-            formData.append('generalTicket', values.generalTicket);
-            formData.append('vipTicket', values.vipTicket);
+            // formData.append('generalTicket', values.generalTicket);
+            // formData.append('vipTicket', values.vipTicket);
 
             const response = await api.post("/events", formData, {
                 headers: {
@@ -224,7 +226,6 @@ const CreateEvent = () => {
         }
     };
 
-
     const handleAddTicketType = () => {
         setTicketType([...ticketType, { id: Date.now(), name: '', price: '', quantity: '' }])
     }
@@ -244,8 +245,7 @@ const CreateEvent = () => {
                 </div>
 
                 {/* FORM */}
-                <form onSubmit={form.handleSubmit()}>
-
+                <form onSubmit={form.handleSubmit(handleSubmit)}>
                     <div className="space-y-6">
                         {/* ------------------ EVENT DETAILS --------------- */}
                         <div className="bg-white p-6 shadow-sm">
@@ -336,6 +336,210 @@ const CreateEvent = () => {
                             </FieldGroup>
                         </div>
 
+                        {/* ------------------ DATE AND TIME --------------- */}
+                        <div className="bg-white p-6 shadow-md">
+                            <div className="flex gap-2 items-center mb-4">
+                                <Clock />
+                                <h3 className="text-2xl font-semibold text-slate-700">Date & Time</h3>
+                            </div>
+                            <FieldGroup>
+                                <div className="flex gap-2">
+                                    <Controller name="startDate" control={form.control} render={({ field, fieldState }) => (
+                                        <Field>
+                                            <FieldLabel>Event Date</FieldLabel>
+                                            <Popover
+                                                open={startOpen}
+                                                onOpenChange={setStartOpen}
+                                            >
+                                                <PopoverTrigger asChild>
+                                                    <Button
+                                                        variant="outline"
+                                                        id="date-picker"
+                                                        className="font-normal"
+                                                    >
+                                                        {field.value
+                                                            ? parseDate(field.value)?.toLocaleDateString()
+                                                            : "Select date"}
+                                                        <ChevronDownIcon />
+                                                    </Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent
+                                                    className="w-auto overflow-hidden p-0"
+                                                    align="start"
+                                                >
+                                                    <Calendar
+                                                        mode="single"
+                                                        selected={field.value ? parseDate(field.value) : undefined}
+                                                        captionLayout="dropdown"
+                                                        disabled={(date) => {
+                                                            const today = new Date();
+                                                            today.setHours(0, 0, 0, 0);
+                                                            return date < today;
+                                                        }}
+                                                        onSelect={(date) => {
+                                                            if (date) {
+                                                                setStartDate(date);
+                                                                const formattedDate = formatDate(date);
+                                                                field.onChange(formattedDate);
+                                                                setStartOpen(false);
+                                                            }
+                                                        }}
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                            {fieldState.invalid && (
+                                                <FieldError errors={[fieldState.error]} />
+                                            )}
+                                        </Field>
+                                    )} />
+                                    <Controller name="startTime" control={form.control} render={({ field, fieldState }) => (
+                                        <Field>
+                                            <FieldLabel>Event Starts</FieldLabel>
+                                            <Input
+                                                type="time"
+                                                aria-invalid={fieldState.invalid}
+                                                {...field}
+                                            />
+                                            {fieldState.invalid && (
+                                                <FieldError errors={[fieldState.error]} />
+                                            )}
+                                        </Field>
+                                    )} />
+
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <Controller name="endDate" control={form.control} render={({ field, fieldState }) => (
+                                        <Field>
+                                            <FieldLabel>Event End Date</FieldLabel>
+                                            <Popover
+                                                open={endOpen}
+                                                onOpenChange={setEndOpen}
+                                            >
+                                                <PopoverTrigger asChild>
+                                                    <Button
+                                                        variant="outline"
+                                                        id="date-picker"
+                                                        className="font-normal"
+                                                    >
+                                                        {field.value
+                                                            ? parseDate(field.value)?.toLocaleDateString()
+                                                            : "Select date"}
+                                                        <ChevronDownIcon />
+                                                    </Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent
+                                                    className="w-auto overflow-hidden p-0"
+                                                    align="start"
+                                                >
+                                                    <Calendar
+                                                        mode="single"
+                                                        selected={field.value ? parseDate(field.value) : undefined}
+                                                        captionLayout="dropdown"
+                                                        disabled={(date) => {
+                                                            const today = new Date();
+                                                            today.setHours(0, 0, 0, 0);
+                                                            return date < today;
+                                                        }}
+                                                        onSelect={(date) => {
+                                                            if (date) {
+                                                                setStartDate(date);
+                                                                const formattedDate = formatDate(date);
+                                                                field.onChange(formattedDate);
+                                                                setEndOpen(false);
+                                                            }
+                                                        }}
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                            {fieldState.invalid && (
+                                                <FieldError errors={[fieldState.error]} />
+                                            )}
+                                        </Field>
+                                    )} />
+                                    <Controller name="endTime" control={form.control} render={({ field, fieldState }) => (
+                                        <Field>
+                                            <FieldLabel>Event Ends</FieldLabel>
+                                            <Input
+                                                type="time"
+                                                aria-invalid={fieldState.invalid}
+                                                {...field}
+                                            />
+                                            {fieldState.invalid && (
+                                                <FieldError errors={[fieldState.error]} />
+                                            )}
+                                        </Field>
+                                    )} />
+                                </div>
+                            </FieldGroup>
+                        </div>
+
+                        {/* ------------------ EVENT FLYER --------------- */}
+                        <div className="bg-white p-6 shadow-md">
+                            <div className="flex gap-2 items-center mb-4">
+                                <Upload />
+                                <h3 className="text-2xl font-semibold text-slate-700">Event Flyer</h3>
+                            </div>
+
+
+                            <Controller name="eventImage" control={form.control} render={({ field: { value, onChange, ...field }, fieldState }) => (
+                                <div className="mt-4">
+                                    {/* Image Preview */}
+                                    {imagePreview && (
+                                        <div className="mb-4 relative">
+                                            <div className="relative w-full h-[200px] overflow-hidden rounded-lg bg-slate-100">
+                                                <img
+                                                    src={imagePreview}
+                                                    alt="Event flyer preview"
+                                                    className="absolute w-full h-full object-cover"
+                                                />
+                                            </div>
+                                            <div className="mt-2 flex items-center justify-between">
+                                                <span className="text-sm text-slate-600">
+                                                    {value?.name}
+                                                </span>
+                                                {imageUploading && (
+                                                    <span className="text-sm text-blue-600">Uploading...</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <Label htmlFor="event-flyer-upload" className="cursor-pointer">
+                                        <div className="border border-dashed border-slate-300 rounded-lg p-2 hover:border-slate-400 transition-colors flex items-center justify-center gap-2 text-slate-600 hover:text-slate-700 w-full">
+                                            <Upload className="w-5 h-5" />
+                                            <span className="font-medium">{imagePreview ? 'Change Flyer' : 'Upload Flyer'}</span>
+                                        </div>
+                                    </Label>
+                                    <Input
+                                        id="event-flyer-upload"
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/jpg"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) {
+                                                setImageUploading(true);
+                                                onChange(file);
+
+                                                // Create preview
+                                                const reader = new FileReader();
+                                                reader.onloadend = () => {
+                                                    setImagePreview(reader.result);
+                                                    setImageUploading(false);
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+                                        }}
+                                        {...field}
+                                    />
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                </div>
+                            )} />
+                        </div>
+
                         {/* ------------------  TICKETS --------------- */}
                         <div className="bg-white p-6 shadow-md ">
                             <div className="flex items-center justify-between">
@@ -415,6 +619,10 @@ const CreateEvent = () => {
                                         <span className="text-sm text-slate-500">You should have at least one ticket type</span>
                                     </div>
                             }
+                        </div>
+
+                        <div>
+                            <Button className="w-full">Submit</Button>
                         </div>
                     </div>
 
