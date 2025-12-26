@@ -54,8 +54,6 @@ const formSchema = z.object({
     startTime: z.string().min(1, "Event start time is required"),
     endTime: z.string().min(1, "Event end time is required"),
     eventImage: z.any().refine((file) => file instanceof File, "Event Flyer is required"),
-    // generalTicket: z.string().min(1, "Event general ticket price is required"),
-    // vipTicket: z.string().min(1, "Event vip ticket section is required")
 
 }).refine((data) => {
     // Only validate if start date/time fields are filled
@@ -136,6 +134,7 @@ const CreateEvent = () => {
             formData.append('startTime', values.startTime);
             formData.append('endTime', values.endTime);
             formData.append('eventImage', values.eventImage);
+            formData.append('ticketTypes', JSON.stringify(ticketType));
             // formData.append('generalTicket', values.generalTicket);
             // formData.append('vipTicket', values.vipTicket);
 

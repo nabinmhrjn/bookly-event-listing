@@ -55,14 +55,23 @@ const eventSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        generalTicket: {
-            type: String,
-            required: true
-        },
-        vipTicket: {
-            type: String,
-            required: true
-        }
+        ticketTypes: [{
+            name: {
+                type: String,
+                required: true
+            },
+            price: {
+                type: String,
+                required: true
+            },
+            //we will implement ticket quantity later on
+            // quantity: {
+            //     type: Number,
+            //     required: false,
+            //     default: 0
+            // },
+            _id: false
+        }]
     },
     { timestamps: true }
 );

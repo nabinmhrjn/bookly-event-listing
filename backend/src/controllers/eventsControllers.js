@@ -6,7 +6,7 @@ import fs from "fs";
 
 export async function createEvent(req, res) {
     try {
-        const { eventName, eventDescription, eventCategory, eventVenue, eventAddress, startDate, endDate, startTime, endTime, generalTicket, vipTicket } = req.body;
+        const { eventName, eventDescription, eventCategory, eventVenue, eventAddress, startDate, endDate, startTime, endTime, ticketTypes } = req.body;
         // Check if file was uploaded
         if (!req.file) {
             return res.status(400).json({
@@ -44,6 +44,17 @@ export async function createEvent(req, res) {
             });
         }
 
+        // Parse ticketTypes if it's a string (from FormData)
+        let parsedTicketTypes = ticketTypes;
+        if (typeof ticketTypes === 'string') {
+            try {
+                parsedTicketTypes = JSON.parse(ticketTypes);
+            } catch (e) {
+                console.error("Error parsing ticketTypes:", e);
+                parsedTicketTypes = [];
+            }
+        }
+
         const event = new Event({
             eventOrganizer: req.user.id,
             eventName,
@@ -56,8 +67,7 @@ export async function createEvent(req, res) {
             startTime,
             endTime,
             eventImage: imageUrl,
-            generalTicket,
-            vipTicket
+            ticketTypes: parsedTicketTypes || []
         });
 
         const savedEvent = await event.save();
