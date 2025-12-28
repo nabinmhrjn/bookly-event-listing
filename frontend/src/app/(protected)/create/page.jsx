@@ -16,9 +16,6 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field
 import { Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label"
 
-
-
-
 const formSchema = z.object({
     eventName: z.string().min(1, "Event name is required.").min(2, {
         message: "Event name must be at least 2 characters.",
@@ -118,8 +115,6 @@ const CreateEvent = () => {
             formData.append('endTime', values.endTime);
             formData.append('eventImage', values.eventImage);
             formData.append('ticketTypes', JSON.stringify(ticketType));
-            // formData.append('generalTicket', values.generalTicket);
-            // formData.append('vipTicket', values.vipTicket);
 
             const response = await api.post("/events", formData, {
                 headers: {

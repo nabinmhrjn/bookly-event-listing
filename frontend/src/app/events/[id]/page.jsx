@@ -15,7 +15,7 @@ const EventDetailPage = () => {
     const [eventDetail, setEventDetail] = useState(null);
     const [ticketQty, setTicketQty] = useState(1)
     const [totalPrice, setTotalPrice] = useState(0)
-    const [selectedTicket, setSelectedTicket] = useState("generalTicket")
+    const [selectedTicketIndex, setSelectedTicketIndex] = useState(0);
     const [loading, setLoading] = useState(false);
     const { id } = useParams();
 
@@ -25,6 +25,10 @@ const EventDetailPage = () => {
             try {
                 const { data } = await api.get(`/events/${id}`);
                 setEventDetail(data);
+                // Set initial price based on first ticket type
+                if (data?.ticketTypes?.length > 0) {
+                    setTotalPrice(Number(data.ticketTypes[0].price) * ticketQty);
+                }
             } catch (error) {
                 console.error("Error fetching event", error);
             } finally {
@@ -35,14 +39,11 @@ const EventDetailPage = () => {
     }, [id]);
 
     useEffect(() => {
-        if (eventDetail) {
-            const ticketPrice = selectedTicket === "generalTicket"
-                ? Number(eventDetail.generalTicket)
-                : Number(eventDetail.vipTicket);
-
+        if (eventDetail?.ticketTypes?.[selectedTicketIndex]) {
+            const ticketPrice = Number(eventDetail.ticketTypes[selectedTicketIndex].price);
             setTotalPrice(ticketPrice * ticketQty);
         }
-    }, [selectedTicket, ticketQty, eventDetail]);
+    }, [selectedTicketIndex, ticketQty, eventDetail]);
 
     const handleCounter = (action) => {
         if (action === "add") {
@@ -52,8 +53,8 @@ const EventDetailPage = () => {
         }
     }
 
-    const handleSelectedTicket = (ticketType) => {
-        setSelectedTicket(ticketType);
+    const handleSelectedTicket = (index) => {
+        setSelectedTicketIndex(index);
     }
 
     if (loading) {
@@ -76,6 +77,7 @@ const EventDetailPage = () => {
                         src={eventDetail?.eventImage || "/test.jpeg"}
                         width={2000}
                         height={2000}
+                        loading="eager"
                         alt={eventDetail?.eventName || "Event image"}
                         className="absolute w-full h-full object-cover"
                     />
@@ -91,32 +93,30 @@ const EventDetailPage = () => {
 
                     <div className="w-[25%]">
                         <div className="p-6 bg-white shadow-md space-y-4">
-                            <div>
+                            {/* <div>
                                 <div className="flex w-full items-center justify-between">
                                     <span className="text-sm font-semibold text-slate-700">Starting from</span>
                                     <Badge className="bg-red-100 text-red-500">Selling fast</Badge>
                                 </div>
-                                <span className="text-2xl font-bold">Rs.{eventDetail?.generalTicket}</span>
-                            </div>
+                                <span className="text-2xl font-bold">Rs.{eventDetail?.ticketTypes?.[0]?.price || 0}</span>
+                            </div> */}
 
                             <div>
-                                <span className="text-sm font-semibold text-slate-700">Ticket Type</span>
-                                <RadioGroup defaultValue="general">
-                                    <Label onClick={() => handleSelectedTicket("generalTicket")} htmlFor="general" className="flex justify-between items-start space-x-2 bg-slate-100 p-4 border">
-                                        <div className="flex gap-2">
-                                            <RadioGroupItem value="general" id="general" />
-                                            <Label htmlFor="general">General Admission</Label>
-                                        </div>
-                                        <Label htmlFor="general">Rs.{eventDetail?.generalTicket}</Label>
-                                    </Label>
-
-                                    <Label onClick={() => handleSelectedTicket("vipTicket")} htmlFor="vip" className="flex justify-between items-start space-x-2 bg-slate-100 p-4 border">
-                                        <div className="flex gap-2">
-                                            <RadioGroupItem value="vip" id="vip" />
-                                            <Label htmlFor="vip">VIP Pass</Label>
-                                        </div>
-                                        <Label htmlFor="vip">Rs.{eventDetail?.vipTicket}</Label>
-                                    </Label>
+                                <span className="text-xl font-semibold text-slate-700">Ticket Type</span>
+                                <RadioGroup value={selectedTicketIndex.toString()} onValueChange={(value) => handleSelectedTicket(Number(value))}>
+                                    {eventDetail?.ticketTypes?.map((ticket, index) => (
+                                        <Label
+                                            key={index}
+                                            htmlFor={`ticket-${index}`}
+                                            className="flex justify-between items-start space-x-2 bg-slate-100 p-4 border cursor-pointer hover:bg-slate-200 transition-colors"
+                                        >
+                                            <div className="flex gap-2">
+                                                <RadioGroupItem value={index.toString()} id={`ticket-${index}`} />
+                                                <Label htmlFor={`ticket-${index}`} className="cursor-pointer">{ticket.name}</Label>
+                                            </div>
+                                            <Label htmlFor={`ticket-${index}`} className="cursor-pointer">Rs.{ticket.price}</Label>
+                                        </Label>
+                                    ))}
                                 </RadioGroup>
                             </div>
 
