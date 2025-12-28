@@ -4,29 +4,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ChevronDownIcon, EditIcon, MapPin, Ticket, Clock, Upload, Trash } from "lucide-react";
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
@@ -34,10 +14,8 @@ import api from "@/lib/axios";
 import { toast } from "sonner"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Controller } from "react-hook-form";
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
 import { Label } from "@/components/ui/label"
-import Tiptap from "@/components/TipTap";
+
 
 
 
@@ -54,6 +32,12 @@ const formSchema = z.object({
     startTime: z.string().min(1, "Event start time is required"),
     endTime: z.string().min(1, "Event end time is required"),
     eventImage: z.any().refine((file) => file instanceof File, "Event Flyer is required"),
+    ticketTypes: z.array(z.object({
+        id: z.number().optional(),
+        name: z.string().min(1, "Ticket name is required"),
+        price: z.string().min(1, "Ticket price is required"),
+        // quantity: z.string().optional()
+    })).min(1, "At least one ticket type is required")
 
 }).refine((data) => {
     // Only validate if start date/time fields are filled
@@ -114,8 +98,7 @@ const CreateEvent = () => {
             startTime: "",
             endTime: "",
             eventImage: null,
-            // generalTicket: "",
-            // vipTicket: ""
+            ticketTypes: []
         },
     });
 
@@ -155,6 +138,8 @@ const CreateEvent = () => {
             setEndHour("");
             setEndMinute("");
             setEndPeriod("");
+            setTicketType([]);
+            setImagePreview(null);
 
             toast.success("Event created successfully!");
 
@@ -226,11 +211,10 @@ const CreateEvent = () => {
     };
 
     const handleAddTicketType = () => {
-        setTicketType([...ticketType, { id: Date.now(), name: '', price: '', quantity: '' }])
-    }
-
-    const handleRemoveTicketType = (id) => {
-        setTicketType(ticketType.filter(ticket => ticket.id !== id))
+        const newTicket = { id: Date.now(), name: '', price: '', quantity: '' };
+        const updated = [...ticketType, newTicket];
+        setTicketType(updated);
+        form.setValue('ticketTypes', updated);
     }
 
     return (
@@ -552,76 +536,97 @@ const CreateEvent = () => {
                             </div>
 
                             {/* Ticket Type Components */}
-                            {
-                                ticketType.length > 0 ? ticketType.map((ticket, index) => (
-                                    <div key={ticket.id} className="bg-slate-200/30 p-4 grid grid-cols-8 gap-2 border mb-6">
-                                        <div className="col-span-6">
-                                            <Field>
-                                                <FieldLabel>Ticket Name</FieldLabel>
-                                                <Input
-                                                    placeholder="General Admission"
-                                                    value={ticket.name}
-                                                    onChange={(e) => {
-                                                        const updated = [...ticketType];
-                                                        updated[index].name = e.target.value;
-                                                        setTicketType(updated);
-                                                    }}
-                                                />
-                                            </Field>
-                                        </div>
-                                        <div>
-                                            <Field>
-                                                <FieldLabel>Price</FieldLabel>
-                                                <Input
-                                                    placeholder="2000"
-                                                    value={ticket.price}
-                                                    onChange={(e) => {
-                                                        const updated = [...ticketType];
-                                                        updated[index].price = e.target.value;
-                                                        setTicketType(updated);
-                                                    }}
-                                                />
-                                            </Field>
-                                        </div>
+                            <Controller
+                                name="ticketTypes"
+                                control={form.control}
+                                render={({ field, fieldState }) => (
+                                    <div>
+                                        {ticketType.length > 0 ? ticketType.map((ticket, index) => {
+                                            const nameError = form.formState.errors?.ticketTypes?.[index]?.name;
+                                            const priceError = form.formState.errors?.ticketTypes?.[index]?.price;
 
-                                        {/* WILL PUT QUANTITY LATER ON */}
-                                        {/* <div>
-                                            <Field>
-                                                <FieldLabel>Quantity</FieldLabel>
-                                                <Input
-                                                    placeholder="200"
-                                                    value={ticket.quantity}
-                                                    onChange={(e) => {
-                                                        const updated = [...ticketType];
-                                                        updated[index].quantity = e.target.value;
-                                                        setTicketType(updated);
-                                                    }}
-                                                />
-                                            </Field>
-                                        </div> */}
+                                            return (
+                                                <FieldGroup key={ticket.id} className="bg-slate-200/30 p-4 grid grid-cols-8 gap-2 border mb-6">
+                                                    <div className="col-span-6">
+                                                        <Field>
+                                                            <FieldLabel>Ticket Name</FieldLabel>
+                                                            <Input
+                                                                placeholder="General Admission"
+                                                                value={ticket.name}
+                                                                aria-invalid={!!nameError}
+                                                                onChange={(e) => {
+                                                                    const updated = [...ticketType];
+                                                                    updated[index].name = e.target.value;
+                                                                    setTicketType(updated);
+                                                                    field.onChange(updated);
+                                                                }}
+                                                            />
+                                                            {nameError && (
+                                                                <p className="text-xs text-red-600 mt-1">
+                                                                    {nameError.message}
+                                                                </p>
+                                                            )}
+                                                        </Field>
+                                                    </div>
+                                                    <div>
+                                                        <Field>
+                                                            <FieldLabel>Price</FieldLabel>
+                                                            <Input
+                                                                type="number"
+                                                                placeholder="2000"
+                                                                value={ticket.price}
+                                                                aria-invalid={!!priceError}
+                                                                onChange={(e) => {
+                                                                    const updated = [...ticketType];
+                                                                    updated[index].price = e.target.value;
+                                                                    setTicketType(updated);
+                                                                    field.onChange(updated);
+                                                                }}
+                                                            />
+                                                            {priceError && (
+                                                                <p className="text-xs text-red-600 mt-1">
+                                                                    {priceError.message}
+                                                                </p>
+                                                            )}
+                                                        </Field>
+                                                    </div>
 
-                                        <div>
-                                            <Field>
-                                                <FieldLabel>Delete</FieldLabel>
-                                                <Button
-                                                    variant="outline"
-                                                    type="button"
-                                                    onClick={() => handleRemoveTicketType(ticket.id)}
-                                                >
-                                                    <Trash className="text-red-400" size={20} />
-                                                </Button>
-                                            </Field>
-                                        </div>
+                                                    <div>
+                                                        <Field>
+                                                            <FieldLabel>Delete</FieldLabel>
+                                                            <Button
+                                                                variant="outline"
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const updated = ticketType.filter(item => item.id !== ticket.id);
+                                                                    setTicketType(updated);
+                                                                    field.onChange(updated);
+                                                                }}
+                                                            >
+                                                                <Trash className="text-red-400" size={20} />
+                                                            </Button>
+                                                        </Field>
+                                                    </div>
+                                                </FieldGroup>
+                                            )
+                                        }) : (
+                                            <div className="text-center py-8">
+                                                <Ticket className="w-12 h-12 mx-auto mb-2 opacity-50 text-slate-400" />
+                                                <span className="text-sm text-slate-500">Add ticket type to get started</span>
+                                            </div>
+                                        )}
+                                        {fieldState.invalid && (
+                                            <FieldError errors={[fieldState.error]} />
+                                        )}
                                     </div>
-                                )) :
-                                    <div className="text-center">
-                                        <span className="text-sm text-slate-500">You should have at least one ticket type</span>
-                                    </div>
-                            }
+                                )}
+                            />
                         </div>
 
                         <div>
-                            <Button className="w-full">Submit</Button>
+                            <Button type="submit" className="w-full" disabled={loading}>
+                                {loading ? "Creating Event..." : "Create Event"}
+                            </Button>
                         </div>
                     </div>
 
