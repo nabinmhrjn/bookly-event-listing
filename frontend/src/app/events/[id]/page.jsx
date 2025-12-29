@@ -3,7 +3,7 @@
 import api from "@/lib/axios";
 import { LoaderIcon } from "lucide-react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button";
 
 const EventDetailPage = () => {
+    const router = useRouter();
     const [eventDetail, setEventDetail] = useState(null);
     const [ticketQty, setTicketQty] = useState(1)
     const [totalPrice, setTotalPrice] = useState(0)
@@ -25,7 +26,7 @@ const EventDetailPage = () => {
             try {
                 const { data } = await api.get(`/events/${id}`);
                 setEventDetail(data);
-                // Set initial price based on first ticket type
+                // set initial price based on first ticket type
                 if (data?.ticketTypes?.length > 0) {
                     setTotalPrice(Number(data.ticketTypes[0].price) * ticketQty);
                 }
@@ -55,6 +56,23 @@ const EventDetailPage = () => {
 
     const handleSelectedTicket = (index) => {
         setSelectedTicketIndex(index);
+    }
+
+    const handleCheckout = () => {
+        const checkoutData = {
+            eventId: id,
+            eventName: eventDetail?.eventName,
+            eventImage: eventDetail?.eventImage,
+            eventVenue: eventDetail?.eventVenue,
+            eventAddress: eventDetail?.eventAddress,
+            startDate: eventDetail?.startDate,
+            startTime: eventDetail?.startTime,
+            selectedTicket: eventDetail?.ticketTypes[selectedTicketIndex],
+            ticketQuantity: ticketQty,
+            totalPrice: totalPrice
+        };
+        sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+        router.push(`/events/${id}/checkout`);
     }
 
     if (loading) {
@@ -145,9 +163,7 @@ const EventDetailPage = () => {
                                 <span className="text-xl font-bold">Rs.{totalPrice}</span>
                             </div>
 
-
-
-                            <Button size="lg" className="w-full cursor-pointer">Book Ticket</Button>
+                            <Button size="lg" className="w-full cursor-pointer" onClick={handleCheckout}>Book Ticket</Button>
 
 
                         </div>

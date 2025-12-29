@@ -28,7 +28,7 @@ const Navbar = () => {
 
                 {/* LOGO */}
                 <Link href="/" className="flex items-center gap-2 cursor-pointer">
-                    <div className='w-8 h-8 bg-primary rounded flex items-center justify-center'>
+                    <div className='w-8 h-8 bg-primary flex items-center justify-center'>
                         <Ticket className='text-white font-semibold' size={20} />
                     </div>
                     <h3 className='text-xl font-semibold'>Bookly</h3>
