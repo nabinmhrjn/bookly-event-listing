@@ -27,6 +27,7 @@ const EventDetail = () => {
     const [startDate, setStartDate] = useState(null);
     const [ticketTypeList, setTicketTypeList] = useState([])
     const [imagePreview, setImagePreview] = useState(null)
+    const [ticketTypesChanged, setTicketTypesChanged] = useState(false)
 
     const form = useForm({
         resolver: zodResolver(eventFormSchema),
@@ -107,13 +108,26 @@ const EventDetail = () => {
     }, [eventId])
 
     const onSubmit = (values) => {
-        console.log("Form submitted successfully!", values)
+        const cleanedTicketTypes = ticketTypeList.map(({ name, price }) => ({
+            name,
+            price
+        }));
+
+        const formData = {
+            ...values,
+            ticketTypes: cleanedTicketTypes
+        };
+        console.log(formData)
     }
 
-    const onError = (errors) => {
-        console.log("Form validation errors:", errors)
+    const handleAddTicketType = () => {
+        const newTicket = {
+            name: '',
+            price: ''
+        };
+        setTicketTypeList([...ticketTypeList, newTicket]);
+        setTicketTypesChanged(true);
     }
-
 
     return (
         <div className="bg-secondary">
@@ -126,7 +140,7 @@ const EventDetail = () => {
 
                 </div>
 
-                <form onSubmit={form.handleSubmit(onSubmit, onError)}>
+                <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="flex gap-6">
                         <div className="w-[70%] space-y-6">
                             {/* ------------------ EVENT DETAILS --------------- */}
@@ -240,7 +254,7 @@ const EventDetail = () => {
                                         <h3 className="text-2xl font-semibold text-slate-700">Tickets</h3>
                                     </div>
                                     <div>
-                                        <Button>+ Add Ticket Type</Button>
+                                        <Button type="button" onClick={handleAddTicketType}>+ Add Ticket Type</Button>
                                     </div>
                                 </div>
 
@@ -256,6 +270,7 @@ const EventDetail = () => {
                                                         const updated = [...ticketTypeList];
                                                         updated[index].name = e.target.value;
                                                         setTicketTypeList(updated);
+                                                        setTicketTypesChanged(true);
                                                     }}
                                                     placeholder="General Admission"
                                                 />
@@ -271,6 +286,7 @@ const EventDetail = () => {
                                                         const updated = [...ticketTypeList];
                                                         updated[index].price = e.target.value;
                                                         setTicketTypeList(updated);
+                                                        setTicketTypesChanged(true);
                                                     }}
                                                     placeholder="2000"
                                                 />
@@ -285,6 +301,7 @@ const EventDetail = () => {
                                                     onClick={() => {
                                                         const updated = ticketTypeList.filter(t => t.id !== ticket.id);
                                                         setTicketTypeList(updated);
+                                                        setTicketTypesChanged(true);
                                                     }}
                                                 >
                                                     <Trash className="text-red-400" />
@@ -309,7 +326,7 @@ const EventDetail = () => {
                                     <Badge variant="outline">Pending</Badge>
                                 </div>
                                 <Separator />
-                                <Button className="w-full mt-4">Delete Event</Button>
+                                <Button type="button" className="w-full mt-4">Delete Event</Button>
                             </div>
 
                             {/* ------------------ DATE AND TIME --------------- */}
@@ -500,7 +517,7 @@ const EventDetail = () => {
                     </div>
                     <div className="flex gap-2 mt-4">
                         {/* <Button>Cancel</Button> */}
-                        <Button type="submit">Save Changes</Button>
+                        <Button type="submit" disabled={!form.formState.isDirty && !ticketTypesChanged}>Save Changes</Button>
                     </div>
                 </form>
             </div>
