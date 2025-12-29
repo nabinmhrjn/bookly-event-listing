@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Clock, EditIcon, ChevronDownIcon, MapPin, Ticket, DeleteIcon, RecycleIcon, LucideDelete, Trash, PictureInPicture, Upload } from "lucide-react"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const EventDetail = () => {
     const { id } = useParams()
@@ -24,6 +25,7 @@ const EventDetail = () => {
     const [startOpen, setStartOpen] = useState(false);
     const [endOpen, setEndOpen] = useState(false);
     const [startDate, setStartDate] = useState(null);
+    const [ticketTypeList, setTicketTypeList] = useState([])
 
     const form = useForm({
         resolver: zodResolver(eventFormSchema),
@@ -71,6 +73,16 @@ const EventDetail = () => {
                 // Set the start date state for the calendar
                 if (response.data?.startDate) {
                     setStartDate(parseDate(response.data.startDate));
+                }
+
+                // Set ticket types from API response
+                if (response.data?.ticketTypes && Array.isArray(response.data.ticketTypes)) {
+                    const formattedTickets = response.data.ticketTypes.map((ticket, index) => ({
+                        id: index,
+                        name: ticket.name || '',
+                        price: ticket.price || '',
+                    }));
+                    setTicketTypeList(formattedTickets);
                 }
 
                 form.reset({
@@ -142,14 +154,27 @@ const EventDetail = () => {
                                             <Controller name="eventCategory" control={form.control} render={({ field, fieldState }) => (
                                                 <Field>
                                                     <FieldLabel>Event Category</FieldLabel>
-                                                    <Input aria-invalid={fieldState.invalid} placeholder="Live-Concert" {...field} />
+                                                    {/* <Input aria-invalid={fieldState.invalid} placeholder="Live-Concert" {...field} /> */}
+                                                    <Select value={field.value} onValueChange={field.onChange} {...field}>
+                                                        <SelectTrigger className="w-[280px]">
+                                                            <SelectValue placeholder="Select Event Category" {...field} />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="live-concert">Live Concerts</SelectItem>
+                                                            <SelectItem value="technology-innovation">Technology & Innovation</SelectItem>
+                                                            <SelectItem value="business-marketing">Business & Networking</SelectItem>
+                                                            <SelectItem value="sports-event">Sports Events</SelectItem>
+                                                            <SelectItem value="comedy-show">Comedy Shows</SelectItem>
+                                                            <SelectItem value="other">Other</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
                                                     {fieldState.invalid && (
                                                         <FieldError errors={[fieldState.error]} />
                                                     )}
                                                 </Field>
                                             )} />
                                         </div>
-                                        <div className="w-1/2">
+                                        {/* <div className="w-1/2">
                                             <Controller name="eventCapacity" control={form.control} render={({ field, fieldState }) => (
                                                 <Field>
                                                     <FieldLabel>Event Capacity</FieldLabel>
@@ -159,7 +184,7 @@ const EventDetail = () => {
                                                     )}
                                                 </Field>
                                             )} />
-                                        </div>
+                                        </div> */}
                                     </div>
 
                                     <Controller name="eventDescription" control={form.control} render={({ field, fieldState }) => (
@@ -221,52 +246,59 @@ const EventDetail = () => {
                                 </div>
 
 
-                                <div className="bg-slate-200/30 p-4 grid grid-cols-8 gap-2 border mb-6">
-                                    <div className="col-span-5">
-                                        <Controller name="ticketName" control={form.control} render={({ field, fieldState }) => (
+                                {ticketTypeList.length > 0 ? ticketTypeList.map((ticket, index) => (
+                                    <div key={ticket.id} className="bg-slate-200/30 p-4 grid grid-cols-8 gap-2 border mb-6">
+                                        <div className="col-span-5">
                                             <Field>
                                                 <FieldLabel>Ticket Name</FieldLabel>
-                                                <Input aria-invalid={fieldState.invalid} placeholder="General Admission" {...field} />
-                                                {fieldState.invalid && (
-                                                    <FieldError errors={[fieldState.error]} />
-                                                )}
+                                                <Input
+                                                    value={ticket.name}
+                                                    onChange={(e) => {
+                                                        const updated = [...ticketTypeList];
+                                                        updated[index].name = e.target.value;
+                                                        setTicketTypeList(updated);
+                                                    }}
+                                                    placeholder="General Admission"
+                                                />
                                             </Field>
-                                        )} />
-                                    </div>
-                                    <div className="">
-                                        <Controller name="ticketPrice" control={form.control} render={({ field, fieldState }) => (
+                                        </div>
+                                        <div className="col-span-2">
                                             <Field>
                                                 <FieldLabel>Price</FieldLabel>
-                                                <Input aria-invalid={fieldState.invalid} placeholder="2000" {...field} />
-                                                {fieldState.invalid && (
-                                                    <FieldError errors={[fieldState.error]} />
-                                                )}
+                                                <Input
+                                                    type="number"
+                                                    value={ticket.price}
+                                                    onChange={(e) => {
+                                                        const updated = [...ticketTypeList];
+                                                        updated[index].price = e.target.value;
+                                                        setTicketTypeList(updated);
+                                                    }}
+                                                    placeholder="2000"
+                                                />
                                             </Field>
-                                        )} />
-                                    </div>
-                                    <div className="">
-                                        <Controller name="ticketQuantity" control={form.control} render={({ field, fieldState }) => (
-                                            <Field>
-                                                <FieldLabel>Quantity</FieldLabel>
-                                                <Input aria-invalid={fieldState.invalid} placeholder="200" {...field} />
-                                                {fieldState.invalid && (
-                                                    <FieldError errors={[fieldState.error]} />
-                                                )}
-                                            </Field>
-                                        )} />
-                                    </div>
-                                    <div className="">
-                                        <Controller name="ticketQuantity" control={form.control} render={({ field, fieldState }) => (
+                                        </div>
+                                        <div>
                                             <Field>
                                                 <FieldLabel>Delete</FieldLabel>
-                                                <Button variant="outline">
-                                                    <Trash className="text-slate-400" />
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    onClick={() => {
+                                                        const updated = ticketTypeList.filter(t => t.id !== ticket.id);
+                                                        setTicketTypeList(updated);
+                                                    }}
+                                                >
+                                                    <Trash className="text-red-400" />
                                                 </Button>
                                             </Field>
-                                        )} />
+                                        </div>
                                     </div>
-
-                                </div>
+                                )) : (
+                                    <div className="text-center py-8 text-slate-500">
+                                        <Ticket className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                                        <span className="text-sm">No ticket types added yet</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -425,7 +457,7 @@ const EventDetail = () => {
                                         <Image
                                             src={eventDetail.eventImage}
                                             width={500}
-                                            height={200}
+                                            height={500}
                                             alt={eventDetail.eventName || "Event image"}
                                             loading="eager"
                                             className="absolute w-full h-full object-cover"
