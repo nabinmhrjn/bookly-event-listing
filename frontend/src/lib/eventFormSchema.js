@@ -12,7 +12,7 @@ const formSchema = z.object({
     endDate: z.string().min(1, "Event end date is required"),
     startTime: z.string().min(1, "Event start time is required"),
     endTime: z.string().min(1, "Event end time is required"),
-    eventImage: z.any().refine((file) => file instanceof File, "Event Flyer is required"),
+    eventImage: z.any().refine((file) => file instanceof File || typeof file === 'string', "Event Flyer is required"),
     generalTicket: z.string().min(1, "Event general ticket price is required"),
     vipTicket: z.string().min(1, "Event vip ticket section is required")
 

@@ -26,6 +26,7 @@ const EventDetail = () => {
     const [endOpen, setEndOpen] = useState(false);
     const [startDate, setStartDate] = useState(null);
     const [ticketTypeList, setTicketTypeList] = useState([])
+    const [imagePreview, setImagePreview] = useState(null)
 
     const form = useForm({
         resolver: zodResolver(eventFormSchema),
@@ -105,12 +106,9 @@ const EventDetail = () => {
         fetchEvent();
     }, [eventId])
 
-
-    function onSubmit() {
-        console.log("YOoo")
+    const onSubmit = (values) => {
+        console.log(values)
     }
-
-
 
 
     return (
@@ -121,10 +119,7 @@ const EventDetail = () => {
                         <span className="text-3xl font-semibold">Edit Event</span>
                         <span className="text-sm text-slate-700">Update the details for </span>
                     </div>
-                    <div className="flex gap-2">
-                        {/* <Button>Cancel</Button> */}
-                        <Button>Save Changes</Button>
-                    </div>
+
                 </div>
 
                 <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -302,7 +297,6 @@ const EventDetail = () => {
                             </div>
                         </div>
 
-
                         <div className="w-[30%] space-y-6">
                             {/* ------------------ PUBLICATION STATUS --------------- */}
                             <div className="bg-white p-6 shadow-md">
@@ -453,9 +447,9 @@ const EventDetail = () => {
                                     <h3 className="text-2xl font-semibold text-slate-700">Event Flyer</h3>
                                 </div>
                                 <div className="relative w-full h-[200px] overflow-hidden rounded-[5px] bg-slate-100">
-                                    {eventDetail?.eventImage ? (
+                                    {imagePreview || eventDetail?.eventImage ? (
                                         <Image
-                                            src={eventDetail.eventImage}
+                                            src={imagePreview || eventDetail.eventImage}
                                             width={500}
                                             height={500}
                                             alt={eventDetail.eventName || "Event image"}
@@ -486,6 +480,8 @@ const EventDetail = () => {
                                                 const file = e.target.files?.[0];
                                                 if (file) {
                                                     onChange(file);
+                                                    const previewUrl = URL.createObjectURL(file);
+                                                    setImagePreview(previewUrl);
                                                 }
                                             }}
                                             {...field}
@@ -498,7 +494,10 @@ const EventDetail = () => {
                             </div>
                         </div>
                     </div>
-
+                    <div className="flex gap-2 mt-4">
+                        {/* <Button>Cancel</Button> */}
+                        <Button>Save Changes</Button>
+                    </div>
                 </form>
             </div>
 
