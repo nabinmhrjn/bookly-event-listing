@@ -107,7 +107,11 @@ const EventDetail = () => {
     }, [eventId])
 
     const onSubmit = (values) => {
-        console.log(values)
+        console.log("Form submitted successfully!", values)
+    }
+
+    const onError = (errors) => {
+        console.log("Form validation errors:", errors)
     }
 
 
@@ -122,7 +126,7 @@ const EventDetail = () => {
 
                 </div>
 
-                <form onSubmit={form.handleSubmit(onSubmit)}>
+                <form onSubmit={form.handleSubmit(onSubmit, onError)}>
                     <div className="flex gap-6">
                         <div className="w-[70%] space-y-6">
                             {/* ------------------ EVENT DETAILS --------------- */}
@@ -496,7 +500,7 @@ const EventDetail = () => {
                     </div>
                     <div className="flex gap-2 mt-4">
                         {/* <Button>Cancel</Button> */}
-                        <Button>Save Changes</Button>
+                        <Button type="submit">Save Changes</Button>
                     </div>
                 </form>
             </div>
