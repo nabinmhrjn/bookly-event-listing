@@ -13,7 +13,7 @@ router.get("/:id", getEventById)
 router.use(validateToken)
 router.post("/", eventImageUpload, createEvent);
 router.get("/user/:id", getEventByUserId)
-router.put("/:id", updateEvent)
+router.put("/:id", eventImageUpload, updateEvent)
 router.delete("/:id", deleteEvent)
 
 export default router;

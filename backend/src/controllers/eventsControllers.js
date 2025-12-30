@@ -214,6 +214,50 @@ export async function updateEvent(req, res) {
             eventImage,
             ticketTypes
         } = req.body;
+
+        let imageUrl = eventImage; // Keep existing image URL by default
+
+        // If a new file was uploaded, upload it to Cloudinary
+        if (req.file) {
+            try {
+                const uploadResponse = await cloudinary.uploader.upload(req.file.path, {
+                    folder: "bookly-events",
+                    resource_type: "image",
+                    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+                    transformation: [
+                        { width: 1200, height: 800, crop: 'limit' },
+                        { quality: 'auto' }
+                    ]
+                });
+                imageUrl = uploadResponse.secure_url;
+
+                // Delete the temporary file after successful upload
+                fs.unlinkSync(req.file.path);
+            } catch (uploadError) {
+                console.error("Cloudinary upload error:", uploadError);
+
+                // Clean up the temporary file even if upload fails
+                if (req.file && fs.existsSync(req.file.path)) {
+                    fs.unlinkSync(req.file.path);
+                }
+
+                return res.status(400).json({
+                    message: "Failed to upload image. Please ensure it's a valid image file."
+                });
+            }
+        }
+
+        // Parse ticketTypes if it's a string (from FormData)
+        let parsedTicketTypes = ticketTypes;
+        if (typeof ticketTypes === 'string') {
+            try {
+                parsedTicketTypes = JSON.parse(ticketTypes);
+            } catch (e) {
+                console.error("Error parsing ticketTypes:", e);
+                parsedTicketTypes = ticketTypes; // Keep as is if parsing fails
+            }
+        }
+
         const updatedEvent = await Event.findByIdAndUpdate(
             req.params.id,
             {
@@ -226,8 +270,8 @@ export async function updateEvent(req, res) {
                 endDate,
                 startTime,
                 endTime,
-                eventImage,
-                ticketTypes
+                eventImage: imageUrl,
+                ticketTypes: parsedTicketTypes
             },
             { new: true }
         );

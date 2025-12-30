@@ -29,6 +29,7 @@ const EventDetail = () => {
     const [ticketTypeList, setTicketTypeList] = useState([])
     const [imagePreview, setImagePreview] = useState(null)
     const [ticketTypesChanged, setTicketTypesChanged] = useState(false)
+    const [isUpdating, setIsUpdating] = useState(false)
 
     const form = useForm({
         resolver: zodResolver(eventFormSchema),
@@ -110,26 +111,58 @@ const EventDetail = () => {
 
     const onSubmit = async (values) => {
         try {
+            setIsUpdating(true);
+
             const cleanedTicketTypes = ticketTypeList.map(({ name, price }) => ({
                 name,
                 price
             }));
 
-            const formData = {
-                ...values,
-                ticketTypes: cleanedTicketTypes
-            };
+            // Check if a new image file was selected
+            const hasNewImage = values.eventImage instanceof File;
 
-            const response = await api.put(`/events/${eventId}`, formData)
+            let response;
+
+            if (hasNewImage) {
+                // If new image is selected, send as FormData
+                const formData = new FormData();
+                formData.append('eventName', values.eventName);
+                formData.append('eventCategory', values.eventCategory);
+                formData.append('eventDescription', values.eventDescription);
+                formData.append('eventVenue', values.eventVenue);
+                formData.append('eventAddress', values.eventAddress);
+                formData.append('startDate', values.startDate);
+                formData.append('startTime', values.startTime);
+                formData.append('endDate', values.endDate);
+                formData.append('endTime', values.endTime);
+                formData.append('eventImage', values.eventImage);
+                formData.append('ticketTypes', JSON.stringify(cleanedTicketTypes));
+
+                response = await api.put(`/events/${eventId}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+            } else {
+                // If no new image, send as JSON (keep existing image URL)
+                const jsonData = {
+                    ...values,
+                    ticketTypes: cleanedTicketTypes
+                };
+
+                response = await api.put(`/events/${eventId}`, jsonData);
+            }
+
             toast.success(response.data.message || "Event update successful");
 
             setTimeout(() => {
                 window.location.reload();
             }, 1000);
         } catch (error) {
-            console.error("Error creating event:", error);
+            console.error("Error updating event:", error);
             const errorMessage = error.response?.data?.message || "Failed to update event. Please try again.";
             toast.error(errorMessage)
+            setIsUpdating(false);
         }
     }
 
@@ -530,7 +563,12 @@ const EventDetail = () => {
                     </div>
                     <div className="flex gap-2 mt-4">
                         {/* <Button>Cancel</Button> */}
-                        <Button type="submit" disabled={!form.formState.isDirty && !ticketTypesChanged}>Save Changes</Button>
+                        <Button
+                            type="submit"
+                            disabled={isUpdating || (!form.formState.isDirty && !ticketTypesChanged)}
+                        >
+                            {isUpdating ? 'Updating...' : 'Save Changes'}
+                        </Button>
                     </div>
                 </form>
             </div>
