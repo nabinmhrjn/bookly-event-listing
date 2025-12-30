@@ -17,6 +17,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field
 import { Clock, EditIcon, ChevronDownIcon, MapPin, Ticket, DeleteIcon, RecycleIcon, LucideDelete, Trash, PictureInPicture, Upload } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { toast } from "sonner"
 
 const EventDetail = () => {
     const { id } = useParams()
@@ -107,17 +108,29 @@ const EventDetail = () => {
         fetchEvent();
     }, [eventId])
 
-    const onSubmit = (values) => {
-        const cleanedTicketTypes = ticketTypeList.map(({ name, price }) => ({
-            name,
-            price
-        }));
+    const onSubmit = async (values) => {
+        try {
+            const cleanedTicketTypes = ticketTypeList.map(({ name, price }) => ({
+                name,
+                price
+            }));
 
-        const formData = {
-            ...values,
-            ticketTypes: cleanedTicketTypes
-        };
-        console.log(formData)
+            const formData = {
+                ...values,
+                ticketTypes: cleanedTicketTypes
+            };
+
+            const response = await api.put(`/events/${eventId}`, formData)
+            toast.success(response.data.message || "Event update successful");
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } catch (error) {
+            console.error("Error creating event:", error);
+            const errorMessage = error.response?.data?.message || "Failed to update event. Please try again.";
+            toast.error(errorMessage)
+        }
     }
 
     const handleAddTicketType = () => {
@@ -260,7 +273,7 @@ const EventDetail = () => {
 
 
                                 {ticketTypeList.length > 0 ? ticketTypeList.map((ticket, index) => (
-                                    <div key={ticket.id} className="bg-slate-200/30 p-4 grid grid-cols-8 gap-2 border mb-6">
+                                    <div key={index} className="bg-slate-200/30 p-4 grid grid-cols-8 gap-2 border mb-6">
                                         <div className="col-span-5">
                                             <Field>
                                                 <FieldLabel>Ticket Name</FieldLabel>

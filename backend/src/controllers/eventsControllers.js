@@ -211,6 +211,8 @@ export async function updateEvent(req, res) {
             endDate,
             startTime,
             endTime,
+            eventImage,
+            ticketTypes
         } = req.body;
         const updatedEvent = await Event.findByIdAndUpdate(
             req.params.id,
@@ -224,6 +226,8 @@ export async function updateEvent(req, res) {
                 endDate,
                 startTime,
                 endTime,
+                eventImage,
+                ticketTypes
             },
             { new: true }
         );
