@@ -1,10 +1,6 @@
 import { Input } from '@/components/ui/input'
 import { Calendar, MapPin, MapPinOff, Search, Ticket } from 'lucide-react'
-import {
-    NativeSelect,
-    NativeSelectOptGroup,
-    NativeSelectOption,
-} from "@/components/ui/native-select"
+import { NativeSelect, NativeSelectOptGroup, NativeSelectOption } from "@/components/ui/native-select"
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'

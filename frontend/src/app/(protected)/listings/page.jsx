@@ -85,7 +85,7 @@ const LitingPage = () => {
                         </div>
                     </div>
 
-                    <div className="p-4">
+                    {/* <div className="p-4">
                         <div className="flex justify-between items-center">
                             <div className="w-1/2 flex items-center border pl-2">
                                 <Search size={20} className="text-primary/30" />
@@ -94,11 +94,9 @@ const LitingPage = () => {
                                     className="w-full border-none"
                                 />
                             </div>
-
-                            {/* SORTING FUNCTIONALITY */}
                             <div className=""></div>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className="p-4 mt-4">
                         <Table>
@@ -139,7 +137,7 @@ const LitingPage = () => {
                                         <TableCell className="text-right">2000</TableCell>
                                         <TableCell className="text-right">2000</TableCell> */}
                                         <TableCell className="flex justify-end gap-2">
-                                            <Button variant="outline" onClick={() => handleListingDetail(item._id)}>View</Button>
+                                            <Button variant="outline" onClick={() => handleListingDetail(item._id)}>Edit</Button>
                                             <Dialog>
                                                 <DialogTrigger asChild>
                                                     <Button variant="destructive">Delete</Button>
