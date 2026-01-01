@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import { connectDB } from "./config/db.js";
 import eventsRoutes from "./routes/eventsRoutes.js"
 import usersRoutes from "./routes/usersRoutes.js"
+import bookingsRoutes from "./routes/bookingsRoutes.js"
 dotenv.config();
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/api/events", eventsRoutes)
 app.use("/api/users", usersRoutes)
+app.use("/api/bookings", bookingsRoutes)
 
 
 connectDB().then(() => {
