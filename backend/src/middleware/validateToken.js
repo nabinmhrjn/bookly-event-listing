@@ -11,11 +11,19 @@ export const validateToken = async (req, res, next) => {
             const verified = jwt.verify(token, process.env.JWT_SECRET);
 
             req.user = await User.findById(verified._id).select("-password");
+
+            if (!req.user) {
+                console.error("User not found in database for token:", verified._id);
+                return res.status(401).json({ message: "User not found" });
+            }
+
             next();
         } catch (error) {
-            res.status(401).json({ message: "Unauthorized" })
+            console.error("Token verification error:", error.message);
+            res.status(401).json({ message: "Unauthorized - Invalid token" })
         }
     } else {
-        res.status(401).json({ message: "Unauthorized" })
+        console.error("No token found in cookies");
+        res.status(401).json({ message: "Unauthorized - No token provided" })
     }
 }

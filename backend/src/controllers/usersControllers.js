@@ -23,8 +23,8 @@ export const signup = async (req, res) => {
 
         const token = generateToken(newUser._id);
 
-        res.cookie("token", token, {
-            httpPnly: true,
+        res.cookie("jwt", token, {
+            httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             maxAge: 7 * 24 * 60 * 60 * 1000
@@ -34,7 +34,7 @@ export const signup = async (req, res) => {
             message: "User created successfully",
             token,
             user: {
-                id: newUser._id,
+                _id: newUser._id,
                 fullName: newUser.fullName,
                 email: newUser.email,
                 createdAt: newUser.createdAt

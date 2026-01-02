@@ -56,7 +56,7 @@ export async function createEvent(req, res) {
         }
 
         const event = new Event({
-            eventOrganizer: req.user.id,
+            eventOrganizer: req.user._id,
             eventName,
             eventDescription,
             eventCategory,

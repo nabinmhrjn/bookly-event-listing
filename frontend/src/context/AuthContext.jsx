@@ -19,9 +19,8 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const initAuth = () => {
-            const token = localStorage.getItem('token');
             const userData = localStorage.getItem('user');
-            if (token && userData) {
+            if (userData) {
                 setUser(JSON.parse(userData));
             }
             setLoading(false);
@@ -32,9 +31,7 @@ export const AuthProvider = ({ children }) => {
     const signup = async (userData) => {
         try {
             const response = await api.post('/users/signup', userData);
-            if (response.data.token) {
-                localStorage.setItem('token', response.data.token);
-            }
+            // Token is automatically set in httpOnly cookie by backend
             if (response.data.user) {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 setUser(response.data.user);
@@ -48,9 +45,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (credentials) => {
         try {
             const response = await api.post('/users/login', credentials);
-            if (response.data.token) {
-                localStorage.setItem('token', response.data.token);
-            }
+            // Token is automatically set in httpOnly cookie by backend
             if (response.data.user) {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 setUser(response.data.user);
@@ -61,10 +56,17 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setUser(null);
+    const logout = async () => {
+        try {
+            // Call backend to clear the cookie
+            await api.post('/users/logout');
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            // Clear local state regardless of API call success
+            localStorage.removeItem('user');
+            setUser(null);
+        }
     };
 
     const updateUser = async (userId, userData) => {

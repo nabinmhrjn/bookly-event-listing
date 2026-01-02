@@ -23,7 +23,7 @@ export async function createBooking(req, res) {
 
         // create the booking
         const booking = new Booking({
-            userId: req.user.id,
+            userId: req.user._id,
             fullName,
             email,
             eventId,
@@ -51,7 +51,7 @@ export async function createBooking(req, res) {
 // get all bookings for the authenticated user
 export async function getUserBookings(req, res) {
     try {
-        const bookings = await Booking.find({ userId: req.user.id })
+        const bookings = await Booking.find({ userId: req.user._id })
             .populate('eventId', 'eventName eventImage startDate startTime eventVenue')
             .sort({ createdAt: -1 });
 
@@ -77,7 +77,7 @@ export async function getBookingById(req, res) {
         }
 
         // ensure the user can only access their own bookings
-        if (booking.userId._id.toString() !== req.user.id) {
+        if (booking.userId._id.toString() !== req.user._id) {
             return res.status(403).json({ message: "Access denied" });
         }
 
@@ -116,7 +116,7 @@ export async function cancelBooking(req, res) {
         }
 
         // ensure the user can only cancel their own bookings
-        if (booking.userId.toString() !== req.user.id) {
+        if (booking.userId.toString() !== req.user._id) {
             return res.status(403).json({ message: "Access denied" });
         }
 
