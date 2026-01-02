@@ -14,6 +14,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useAuth } from "@/context/AuthContext";
+import api from "@/lib/axios";
+import { toast } from "sonner";
 
 const formSchema = z.object({
     fullName: z.string().min(1, "Full name is required"),
@@ -25,6 +27,7 @@ const Checkout = () => {
     const router = useRouter();
     const [checkoutData, setCheckoutData] = useState(null);
     const [useMyInfo, setUseMyInfo] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const { user } = useAuth();
 
     useEffect(() => {
@@ -82,19 +85,40 @@ const Checkout = () => {
         );
     }
 
-    const handleSubmit = (values) => {
+    const handleSubmit = async (values) => {
         if (!user) {
             router.push("/login")
         } else {
-            const bookingData = {
-                ...values,
-                ticketType: checkoutData.selectedTicket?.name,
-                ticketQuantity: checkoutData.ticketQuantity,
-                totalPrice: checkoutData.totalPrice,
-                eventId: checkoutData.eventId,
-                eventName: checkoutData.eventName,
-            };
-            console.log("Booking Data:", bookingData);
+            try {
+                setIsSubmitting(true);
+
+                const bookingData = {
+                    ...values,
+                    ticketType: checkoutData.selectedTicket?.name,
+                    ticketQuantity: checkoutData.ticketQuantity,
+                    totalPrice: checkoutData.totalPrice,
+                    eventId: checkoutData.eventId,
+                    eventName: checkoutData.eventName,
+                };
+
+                const response = await api.post('/bookings', bookingData);
+
+                toast.success(response.data.message || "Booking created successfully!");
+
+                // Clear checkout data from session storage
+                sessionStorage.removeItem('checkoutData');
+
+                // Redirect to bookings page or confirmation page
+                setTimeout(() => {
+                    router.push('/bookings');
+                }, 1500);
+
+            } catch (error) {
+                console.error("Error creating booking:", error);
+                const errorMessage = error.response?.data?.message || "Failed to create booking. Please try again.";
+                toast.error(errorMessage);
+                setIsSubmitting(false);
+            }
         }
     }
 
@@ -241,8 +265,17 @@ const Checkout = () => {
                                 </div>
                             </div>
                             <div>
-                                <Button className="w-full" type="submit">
-                                    {user ? "Proceed To Payment" : "Login To Proceed"}
+                                <Button
+                                    className="w-full"
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting
+                                        ? "Creating Booking..."
+                                        : user
+                                            ? "Proceed To Payment"
+                                            : "Login To Proceed"
+                                    }
                                 </Button>
                             </div>
                         </div>
