@@ -136,3 +136,95 @@ export const updateUser = async (req, res) => {
         res.status(500).json({ message: "Internal server error 💥" });
     }
 }
+
+export const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ message: "Email is required" });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            // don't reveal if user exists or not for security
+            return res.status(200).json({
+                message: "If an account exists with this email, you will receive a password reset link"
+            });
+        }
+
+        // generate reset token using crypto
+        const crypto = await import('crypto');
+        const resetToken = crypto.randomBytes(32).toString('hex');
+
+        // hash the token before saving to database
+        const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+        // save hashed token and expiry to user
+        user.resetPasswordToken = hashedToken;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+        await user.save();
+
+        // create reset URL (frontend URL)
+        const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+        // TODO: Send email with reset link
+        // For now, we'll just return the link (in production, send via email)
+        console.log("Password Reset Link:", resetUrl);
+
+        res.status(200).json({
+            message: "Password reset link has been sent to your email",
+            // Remove this in production - only for development
+            resetUrl: process.env.NODE_ENV === 'development' ? resetUrl : undefined
+        });
+
+    } catch (error) {
+        console.error("Error in forgotPassword controller", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { token, newPassword } = req.body;
+
+        if (!token || !newPassword) {
+            return res.status(400).json({ message: "Token and new password are required" });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ message: "Password must be at least 6 characters" });
+        }
+
+        // Hash the token from URL to compare with stored hash
+        const crypto = await import('crypto');
+        const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+        // Find user with valid token and not expired
+        const user = await User.findOne({
+            resetPasswordToken: hashedToken,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({ message: "Invalid or expired reset token" });
+        }
+
+        // Hash new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Update password and clear reset token fields
+        user.password = hashedPassword;
+        user.resetPasswordToken = null;
+        user.resetPasswordExpires = null;
+        await user.save();
+
+        res.status(200).json({
+            message: "Password has been reset successfully. You can now login with your new password."
+        });
+
+    } catch (error) {
+        console.error("Error in resetPassword controller", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};

@@ -9,9 +9,6 @@ const Homepage = () => {
     <div className='bg-secondary'>
       <Hero />
       <FeaturedEvents />
-      {/* <CategoryBrowse /> */}
-      {/* <FeaturedEvents /> */}
-      {/* <EasySteps /> */}
     </div>
   )
 }

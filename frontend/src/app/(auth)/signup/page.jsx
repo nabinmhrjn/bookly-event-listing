@@ -83,173 +83,161 @@ const Signup = () => {
     };
 
     return (
-        <div className="max-w-5xl mx-auto min-h-screen flex flex-col items-start justify-center">
-            <div className="mb-2">
-                <Button
-                    variant="ghost"
-                    onClick={() => router.push("/")}
-                    className="flex items-center gap-2 hover:bg-transparent cursor-pointer"
-                >
-                    <ArrowLeftIcon size={18} />
-                    Back to Home
-                </Button>
-            </div>
-            <div className="w-full flex items-center gap-10 overflow-hidden rounded-3xl drop-shadow-2xl">
-                <div className="w-1/2">
-                    <div className="relative w-full h-[600px]">
-                        <Image
-                            src="/test.jpeg"
-                            width={500}
-                            height={500}
-                            loading="eager"
-                            alt="Picture of the author"
-                            className="absolute w-full h-full object-cover"
-                        />
-                    </div>
+        <div className="bg-secondary">
+            <div className="max-w-xl mx-auto min-h-screen flex flex-col items-start justify-center">
+                <div className="mb-2">
+                    <Button
+                        variant="ghost"
+                        onClick={() => router.push("/")}
+                        className="flex items-center gap-2 hover:bg-transparent cursor-pointer"
+                    >
+                        <ArrowLeftIcon size={18} />
+                        Back to Home
+                    </Button>
                 </div>
-                <div className="w-1/2 space-y-8">
-                    <div className="flex items-center justify-between">
+                <div className="w-full flex items-center gap-10 overflow-hidden rounded-xl drop-shadow-2xl bg-white">
 
-                        <h3 className="font-bold text-xl">Bookly</h3>
-                    </div>
+                    <div className="w-full space-y-8 p-12">
 
-                    <div className="mt-4">
-                        <div className="flex flex-col">
-                            <span className="text-2xl font-semibold">
-                                Create Your Account
-                            </span>
-                            <span className="text-sm">
-                                Join us to discover and book tickets for amazing events
-                            </span>
+
+                        <div>
+                            <div className="flex flex-col">
+                                <span className="text-2xl font-semibold">
+                                    Create Your Account
+                                </span>
+                                <span className="text-sm">
+                                    Join us to discover and book tickets for amazing events
+                                </span>
+                            </div>
                         </div>
-                    </div>
 
-                    {/* FORM */}
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                            <FormField
-                                control={form.control}
-                                name="fullName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Full Name</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter your full name" {...field} />
-                                        </FormControl>
+                        {/* FORM */}
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                <FormField
+                                    control={form.control}
+                                    name="fullName"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Full Name</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Enter your full name" {...field} />
+                                            </FormControl>
 
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email Address</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter your email" {...field} />
-                                        </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Email Address</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Enter your email" {...field} />
+                                            </FormControl>
 
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <div className="flex items-center gap-2 border border-primary/10">
-                                                <Input
-                                                    type={showPassword ? "text" : "password"}
-                                                    placeholder="Enter your password"
-                                                    {...field}
-                                                    className="w-full border-none focus-visible:ring-0"
-                                                />
-                                                {showPassword ? (
-                                                    <EyeIcon
-                                                        onClick={() => setShowPassword(!showPassword)}
-                                                        size={18}
-                                                        className="cursor-pointer text-primary/40 mr-2"
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Password</FormLabel>
+                                            <FormControl>
+                                                <div className="flex items-center gap-2 border border-primary/10">
+                                                    <Input
+                                                        type={showPassword ? "text" : "password"}
+                                                        placeholder="Enter your password"
+                                                        {...field}
+                                                        className="w-full border-none focus-visible:ring-0"
                                                     />
-                                                ) : (
-                                                    <EyeOffIcon
-                                                        onClick={() => setShowPassword(!showPassword)}
-                                                        size={18}
-                                                        className="cursor-pointer text-primary/40 mr-2"
+                                                    {showPassword ? (
+                                                        <EyeIcon
+                                                            onClick={() => setShowPassword(!showPassword)}
+                                                            size={18}
+                                                            className="cursor-pointer text-primary/40 mr-2"
+                                                        />
+                                                    ) : (
+                                                        <EyeOffIcon
+                                                            onClick={() => setShowPassword(!showPassword)}
+                                                            size={18}
+                                                            className="cursor-pointer text-primary/40 mr-2"
+                                                        />
+                                                    )}
+                                                </div>
+                                            </FormControl>
+
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="confirmPassword"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Confirm Password</FormLabel>
+                                            <FormControl>
+                                                <div className="flex items-center gap-2 border border-primary/10">
+                                                    <Input
+                                                        type={showConfirmPassword ? "text" : "password"}
+                                                        placeholder="Confirm password"
+                                                        {...field}
+                                                        className="w-full border-none focus-visible:ring-0"
                                                     />
-                                                )}
-                                            </div>
-                                        </FormControl>
+                                                    {showConfirmPassword ? (
+                                                        <EyeIcon
+                                                            onClick={() =>
+                                                                setShowConfirmPassword(!showConfirmPassword)
+                                                            }
+                                                            size={18}
+                                                            className="cursor-pointer text-primary/40 mr-2"
+                                                        />
+                                                    ) : (
+                                                        <EyeOffIcon
+                                                            onClick={() =>
+                                                                setShowConfirmPassword(!showConfirmPassword)
+                                                            }
+                                                            size={18}
+                                                            className="cursor-pointer text-primary/40 mr-2"
+                                                        />
+                                                    )}
+                                                </div>
+                                            </FormControl>
 
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="confirmPassword"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Confirm Password</FormLabel>
-                                        <FormControl>
-                                            <div className="flex items-center gap-2 border border-primary/10">
-                                                <Input
-                                                    type={showConfirmPassword ? "text" : "password"}
-                                                    placeholder="Confirm password"
-                                                    {...field}
-                                                    className="w-full border-none focus-visible:ring-0"
-                                                />
-                                                {showConfirmPassword ? (
-                                                    <EyeIcon
-                                                        onClick={() =>
-                                                            setShowConfirmPassword(!showConfirmPassword)
-                                                        }
-                                                        size={18}
-                                                        className="cursor-pointer text-primary/40 mr-2"
-                                                    />
-                                                ) : (
-                                                    <EyeOffIcon
-                                                        onClick={() =>
-                                                            setShowConfirmPassword(!showConfirmPassword)
-                                                        }
-                                                        size={18}
-                                                        className="cursor-pointer text-primary/40 mr-2"
-                                                    />
-                                                )}
-                                            </div>
-                                        </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                <Button className="w-full" type="submit" disabled={loading}>
+                                    {loading ? (
+                                        <>
+                                            <Spinner className="mr-2" />
+                                            Signing up...
+                                        </>
+                                    ) : (
+                                        "Sign Up"
+                                    )}
+                                </Button>
+                            </form>
+                        </Form>
 
-                            <Button className="w-full" type="submit" disabled={loading}>
-                                {loading ? (
-                                    <>
-                                        <Spinner className="mr-2" />
-                                        Signing up...
-                                    </>
-                                ) : (
-                                    "Sign Up"
-                                )}
-                            </Button>
-                        </form>
-                    </Form>
-
-                    <span className="text-center">
-                        Already have an account?{" "}
-                        <span
-                            className="text-blue-600 cursor-pointer"
-                            onClick={() => router.push("/login")}
-                        >
-                            Login
+                        <span className="text-center text-sm">
+                            Already have an account?{" "}
+                            <span
+                                className="text-blue-600 cursor-pointer hover:underline "
+                                onClick={() => router.push("/login")}
+                            >
+                                Login here
+                            </span>
                         </span>
-                    </span>
+                    </div>
                 </div>
             </div>
         </div>
