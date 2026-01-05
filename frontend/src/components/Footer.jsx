@@ -4,7 +4,7 @@ import { Button } from './ui/button'
 
 const Footer = () => {
     return (
-        <footer className='w-full border-t'>
+        <footer className='w-full border-t bg-black/80 text-slate-200'>
             <div className='max-w-7xl mx-auto px-6 py-12'>
                 {/* Main Footer Content */}
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8'>
@@ -14,7 +14,7 @@ const Footer = () => {
                             <div className='w-8 h-8 bg-primary rounded flex items-center justify-center'>
                                 <Ticket className='text-white font-semibold' size={20} />
                             </div>
-                            <span className='text-xl font-bold '>Bookly</span>
+                            <span className='text-xl font-bold'>Bookly</span>
                         </div>
                         <p className='text-sm leading-relaxed'>
                             Bookly is the easiest way to discover and book events. Join our community today.
@@ -98,8 +98,8 @@ const Footer = () => {
 
                 {/* Bottom Bar */}
                 <div className='pt-8 flex border-t flex-col md:flex-row justify-between items-center gap-4'>
-                    <p className='text-gray-500 text-sm'>
-                        © 2025 Bookly Inc. All rights reserved.
+                    <p className='text-gray-400 text-sm'>
+                        © 2026 Bookly Inc. All rights reserved.
                     </p>
                     <div className='flex gap-4'>
                         <a href='#' className='text-gray-400 hover:text-blue-600 transition-colors'>

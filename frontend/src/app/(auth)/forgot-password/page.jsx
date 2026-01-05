@@ -107,7 +107,7 @@ const ForgotPassword = () => {
 
                         <div className="text-center text-sm">
                             <span
-                                className="text-blue-600 cursor-pointer hover:underline"
+                                className="text-slate-600 cursor-pointer hover:underline"
                                 onClick={() => router.push("/login")}
                             >
                                 Back to Login

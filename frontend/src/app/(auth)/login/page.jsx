@@ -152,7 +152,7 @@ const Login = () => {
                             <span className="text-center text-sm">
                                 New to Bookly?{" "}
                                 <span
-                                    className="text-blue-600 cursor-pointer hover:underline text-sm"
+                                    className="text-slate-600 cursor-pointer hover:underline text-sm"
                                     onClick={() => router.push("/signup")}
                                 >
                                     Create an account
@@ -160,7 +160,7 @@ const Login = () => {
                             </span>
                             <span>
                                 <span
-                                    className="text-blue-600 cursor-pointer hover:underline text-sm"
+                                    className="text-slate-600 cursor-pointer hover:underline text-sm"
                                     onClick={() => router.push("/forgot-password")}
                                 >
                                     Forgot Password?

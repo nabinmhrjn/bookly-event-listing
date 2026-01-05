@@ -29,8 +29,8 @@ const FeaturedEvents = () => {
                 </div>
 
                 {/* Events Grid */}
-                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-                    {eventList.slice(0, 4).map((item) => (
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                    {eventList.slice(0, 3).map((item) => (
                         <Link href={`/events/${item._id}`} key={item._id}>
                             <EventCard item={item} />
                         </Link>

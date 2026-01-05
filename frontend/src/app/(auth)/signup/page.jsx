@@ -231,7 +231,7 @@ const Signup = () => {
                         <span className="text-center text-sm">
                             Already have an account?{" "}
                             <span
-                                className="text-blue-600 cursor-pointer hover:underline "
+                                className="text-slate-600 cursor-pointer hover:underline "
                                 onClick={() => router.push("/login")}
                             >
                                 Login here
