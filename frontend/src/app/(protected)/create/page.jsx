@@ -217,7 +217,7 @@ const CreateEvent = () => {
             <div className="max-w-4xl mx-auto">
                 <div className="mb-8">
                     <p className="text-2xl font-bold">Create New Event</p>
-                    <p className="text-sm text-primary/40">
+                    <p className="text-sm text-slate-600">
                         Fill in the details below to launch your new event listing
                     </p>
                 </div>

@@ -20,7 +20,7 @@ const FeaturedEvents = () => {
     }, [])
 
     return (
-        <div className='pt-12'>
+        <div className='pt-8'>
             <div className='max-w-7xl mx-auto pb-14'>
                 {/* Header */}
                 <div className='flex justify-between items-center mb-4'>
