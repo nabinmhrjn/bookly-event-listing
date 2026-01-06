@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import api from "@/lib/axios";
-import { ChevronDownIcon, LoaderIcon } from "lucide-react";
+import { ChevronDownIcon, Filter, LoaderIcon, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -26,6 +26,7 @@ const EventPage = () => {
     const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl)
     const [selectedDay, setSelectedDay] = useState(dayFromUrl ? dayFromUrl.split('|') : [])
     const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1, totalEvents: 0, hasNextPage: false, hasPreviousPage: false });
+    const [showFilters, setShowFilters] = useState(false);
 
 
     const fetchEvents = async (pageNum, category, day) => {
@@ -145,97 +146,114 @@ const EventPage = () => {
         return pages;
     };
 
-    return (
-        <div className="py-5 bg-secondary">
-            <div className="max-w-7xl mx-auto">
-                <div className="pb-2">
-                    <p className=" text-lg font-bold">Filters</p>
+    const FilterSection = () => (
+        <div className="p-4 bg-white rounded-lg">
+            <p className="font-bold mb-4">Category</p>
+
+            {/* RADIO GROUP */}
+            <div className="space-y-2">
+                <RadioGroup value={selectedCategory} onValueChange={handleCategoryChange}>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="live-concert" id="Live Concert" />
+                        <Label htmlFor="Live Concert">Live Concert</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="comedy-show" id="Comedy Show" />
+                        <Label htmlFor="Comedy Show">Comedy Show</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="sports-event" id="Sports Event" />
+                        <Label htmlFor="Sports Event">Sports Event</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="technology-innovation" id="Technology & Innovation" />
+                        <Label htmlFor="Technology & Innovation">Technology & Innovation</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="business-marketing" id="Business & Marketing" />
+                        <Label htmlFor="Business & Marketing">Business & Marketing</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="other" id="Other" />
+                        <Label htmlFor="Other">Other</Label>
+                    </div>
+                </RadioGroup>
+            </div>
+
+            {/* DATE PICKER | CALENDAR */}
+            <div className="mt-6 space-y-2">
+                <Label htmlFor="date" className="px-1 font-bold">
+                    Date Range
+                </Label>
+                <div className="flex gap-2 flex-wrap">
+                    <Toggle
+                        variant="outline"
+                        pressed={selectedDay.includes("today")}
+                        onPressedChange={() => handleDayChange('today')}
+                    >
+                        Today
+                    </Toggle>
+                    <Toggle
+                        variant="outline"
+                        pressed={selectedDay.includes("tomorrow")}
+                        onPressedChange={() => handleDayChange('tomorrow')}
+                    >
+                        Tomorrow
+                    </Toggle>
+                    <Toggle
+                        variant="outline"
+                        pressed={selectedDay.includes("this-weekend")}
+                        onPressedChange={() => handleDayChange('this-weekend')}
+                    >
+                        This Weekend
+                    </Toggle>
                 </div>
-                <div className="flex gap-6">
+            </div>
 
-                    {/* LEFT SECTION */}
-                    <div className="w-[20%] p-4 h-[430px] bg-white">
-                        <p className="font-bold">Category</p>
+            <div className="mt-6">
+                <Button className="w-full" onClick={handleClearFilters}>Clear Filters</Button>
+            </div>
+        </div>
+    );
 
-                        {/* RADIO GROUP */}
-                        <div className="pt-4">
-                            <RadioGroup value={selectedCategory} onValueChange={handleCategoryChange}>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="live-concert" id="Live Concert" />
-                                    <Label htmlFor="Live Concert">Live Concert</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="comedy-show" id="Comedy Show" />
-                                    <Label htmlFor="Comedy Show">Comedy Show</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="sports-event" id="Sports Event" />
-                                    <Label htmlFor="Sports Event">Sports Event</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="technology-innovation" id="Technology & Innovation" />
-                                    <Label htmlFor="Technology & Innovation">Technology & Innovation</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="business-marketing" id="Business & Marketing" />
-                                    <Label htmlFor="Business & Marketing">Business & Marketing</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="other" id="Other" />
-                                    <Label htmlFor="Other">Other</Label>
-                                </div>
-                            </RadioGroup>
-                        </div>
+    return (
+        <div className="py-5 sm:py-8 bg-secondary">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header with mobile filter toggle */}
+                <div className="flex justify-between items-center mb-4 sm:mb-6">
+                    <p className="text-lg sm:text-xl font-bold">Filters</p>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="lg:hidden"
+                        onClick={() => setShowFilters(!showFilters)}
+                    >
+                        {showFilters ? <X size={20} /> : <Filter size={20} />}
+                        <span className="ml-2">{showFilters ? 'Hide' : 'Show'} Filters</span>
+                    </Button>
+                </div>
 
-                        {/* DATE PICKER | CALENDAR */}
-                        <div className="mt-8 space-y-2">
-                            <Label htmlFor="date" className="px-1 font-bold">
-                                Date Range
-                            </Label>
-                            <div className="flex gap-2 flex-wrap">
-                                <Toggle
-                                    variant="outline"
-                                    pressed={selectedDay.includes("today")}
-                                    onPressedChange={() => handleDayChange('today')}
-                                >
-                                    Today
-                                </Toggle>
-                                <Toggle
-                                    variant="outline"
-                                    pressed={selectedDay.includes("tomorrow")}
-                                    onPressedChange={() => handleDayChange('tomorrow')}
-                                >
-                                    Tomorrow
-                                </Toggle>
-                                <Toggle
-                                    variant="outline"
-                                    pressed={selectedDay.includes("this-weekend")}
-                                    onPressedChange={() => handleDayChange('this-weekend')}
-                                >
-                                    This Weekend
-                                </Toggle>
-                            </div>
-                        </div>
+                <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
 
-                        <div className="mt-8">
-                            <Button className="w-full" onClick={handleClearFilters}>Clear Filters</Button>
-                        </div>
+                    {/* LEFT SECTION - FILTERS */}
+                    <div className={`${showFilters ? 'block' : 'hidden'} lg:block lg:w-64 lg:shrink-0`}>
+                        <FilterSection />
                     </div>
 
-                    {/* RIGHT SECTION */}
-                    <div className="w-[80%]">
+                    {/* RIGHT SECTION - EVENTS */}
+                    <div className="flex-1 min-w-0">
                         {loading ? (
                             <div className="min-h-screen bg-base-200 flex items-center justify-center">
                                 <LoaderIcon className="animate-spin size-10" />
                             </div>
                         ) : (
                             <>
-                                <div className="grid grid-cols-3 gap-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                                     {eventList.length > 0 ? eventList.map((item) => (
                                         <Link href={`/events/${item._id}`} key={item._id}>
                                             <EventCard item={item} />
                                         </Link>
-                                    )) : <p>No events found</p>}
+                                    )) : <p className="text-center col-span-full py-8">No events found</p>}
                                 </div>
 
                                 {/* Pagination */}

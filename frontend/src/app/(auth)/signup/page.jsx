@@ -84,7 +84,7 @@ const Signup = () => {
 
     return (
         <div className="bg-secondary">
-            <div className="max-w-xl mx-auto min-h-screen flex flex-col items-start justify-center">
+            <div className="max-w-xl mx-auto min-h-screen flex flex-col items-start justify-center px-4 md:px-6">
                 <div className="mb-2">
                     <Button
                         variant="ghost"
@@ -97,12 +97,12 @@ const Signup = () => {
                 </div>
                 <div className="w-full flex items-center gap-10 overflow-hidden rounded-xl drop-shadow-2xl bg-white">
 
-                    <div className="w-full space-y-8 p-12">
+                    <div className="w-full space-y-8 p-6 md:p-12">
 
 
                         <div>
                             <div className="flex flex-col">
-                                <span className="text-2xl font-semibold">
+                                <span className="text-xl md:text-2xl font-semibold">
                                     Create Your Account
                                 </span>
                                 <span className="text-sm">

@@ -85,54 +85,45 @@ const EventDetailPage = () => {
 
     return (
         <div className="bg-secondary">
-            <div className="max-w-7xl mx-auto">
-                <div className="py-8">
-
-                    <h3 className="text-4xl font-semibold">{eventDetail?.eventName}</h3>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="py-6 sm:py-8">
+                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">{eventDetail?.eventName}</h3>
                 </div>
-                <div className="relative w-full h-[400px]">
+                <div className="relative w-full h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px]">
                     <Image
                         src={eventDetail?.eventImage || "/test.jpeg"}
                         width={2000}
                         height={2000}
                         loading="eager"
                         alt={eventDetail?.eventName || "Event image"}
-                        className="absolute w-full h-full object-cover"
+                        className="absolute w-full h-full object-cover rounded-lg"
                     />
-                    <div className="absolute w-full h-full bg-black/20 z-10"></div>
+                    <div className="absolute w-full h-full bg-black/20 z-10 rounded-lg"></div>
                 </div>
-                <div className="flex gap-8 py-8">
-                    <div className="w-[75%] bg-white p-8">
+                <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 py-6 sm:py-8">
+                    <div className="lg:flex-1 bg-white p-6 sm:p-8 rounded-lg">
                         <div>
-                            <span className="text-2xl font-semibold">About the Event</span>
-                            <p className="text-slate-600 mt-2">{eventDetail?.eventDescription}</p>
+                            <span className="text-xl sm:text-2xl font-semibold">About the Event</span>
+                            <p className="text-slate-600 mt-3 sm:mt-4 leading-relaxed">{eventDetail?.eventDescription}</p>
                         </div>
                     </div>
 
-                    <div className="w-[25%]">
-                        <div className="p-6 bg-white shadow-md space-y-4">
-                            {/* <div>
-                                <div className="flex w-full items-center justify-between">
-                                    <span className="text-sm font-semibold text-slate-700">Starting from</span>
-                                    <Badge className="bg-red-100 text-red-500">Selling fast</Badge>
-                                </div>
-                                <span className="text-2xl font-bold">Rs.{eventDetail?.ticketTypes?.[0]?.price || 0}</span>
-                            </div> */}
-
+                    <div className="lg:w-80 lg:shrink-0">
+                        <div className="p-6 bg-white shadow-md rounded-lg space-y-4 sticky top-4">
                             <div>
-                                <span className="text-xl font-semibold text-slate-700">Ticket Type</span>
+                                <span className="text-lg sm:text-xl font-semibold text-slate-700">Ticket Type</span>
                                 <RadioGroup value={selectedTicketIndex.toString()} onValueChange={(value) => handleSelectedTicket(Number(value))}>
                                     {eventDetail?.ticketTypes?.map((ticket, index) => (
                                         <Label
                                             key={index}
                                             htmlFor={`ticket-${index}`}
-                                            className="flex justify-between items-start space-x-2 bg-slate-100 p-4 border cursor-pointer hover:bg-slate-200 transition-colors"
+                                            className="flex justify-between items-start space-x-2 bg-slate-100 p-3 sm:p-4 border cursor-pointer hover:bg-slate-200 transition-colors rounded-md mt-2"
                                         >
                                             <div className="flex gap-2">
                                                 <RadioGroupItem value={index.toString()} id={`ticket-${index}`} />
                                                 <Label htmlFor={`ticket-${index}`} className="cursor-pointer">{ticket.name}</Label>
                                             </div>
-                                            <Label htmlFor={`ticket-${index}`} className="cursor-pointer">Rs.{ticket.price}</Label>
+                                            <Label htmlFor={`ticket-${index}`} className="cursor-pointer font-semibold">Rs.{ticket.price}</Label>
                                         </Label>
                                     ))}
                                 </RadioGroup>

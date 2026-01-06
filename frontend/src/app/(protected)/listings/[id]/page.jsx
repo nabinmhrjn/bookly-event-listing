@@ -177,23 +177,23 @@ const EventDetail = () => {
 
     return (
         <div className="bg-secondary">
-            <div className="max-w-7xl mx-auto py-12">
+            <div className="max-w-7xl mx-auto py-6 md:py-12 px-4 md:px-6">
                 <div className="flex items-center justify-between pb-4">
                     <div className="flex flex-col">
-                        <span className="text-3xl font-semibold">Edit Event</span>
-                        <span className="text-sm text-slate-700">Update the details for </span>
+                        <span className="text-2xl md:text-3xl font-semibold">Edit Event</span>
+                        <span className="text-sm text-slate-700">Update the details for {eventDetail.eventName} </span>
                     </div>
 
                 </div>
 
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <div className="flex gap-6">
-                        <div className="w-[70%] space-y-6">
+                    <div className="flex flex-col lg:flex-row gap-6">
+                        <div className="w-full lg:w-[70%] space-y-6">
                             {/* ------------------ EVENT DETAILS --------------- */}
-                            <div className="bg-white p-6 shadow-sm">
+                            <div className="bg-white p-4 md:p-6 shadow-sm">
                                 <div className="flex gap-2 items-center mb-4">
                                     <EditIcon />
-                                    <h3 className="text-2xl font-semibold text-slate-700">Event Details</h3>
+                                    <h3 className="text-xl md:text-2xl font-semibold text-slate-700">Event Details</h3>
                                 </div>
                                 <FieldGroup>
                                     <Controller name="eventName" control={form.control} render={({ field, fieldState }) => (
@@ -208,14 +208,14 @@ const EventDetail = () => {
                                     )} />
 
 
-                                    <div className="flex w-full gap-4">
-                                        <div className="w-1/2">
+                                    <div className="flex w-full flex-col sm:flex-row gap-4">
+                                        <div className="w-full sm:w-1/2">
                                             <Controller name="eventCategory" control={form.control} render={({ field, fieldState }) => (
                                                 <Field>
                                                     <FieldLabel>Event Category</FieldLabel>
                                                     {/* <Input aria-invalid={fieldState.invalid} placeholder="Live-Concert" {...field} /> */}
                                                     <Select value={field.value} onValueChange={field.onChange} {...field}>
-                                                        <SelectTrigger className="w-[280px]">
+                                                        <SelectTrigger className="w-full">
                                                             <SelectValue placeholder="Select Event Category" {...field} />
                                                         </SelectTrigger>
                                                         <SelectContent>
@@ -261,10 +261,10 @@ const EventDetail = () => {
                             </div>
 
                             {/* ------------------  LOCATION --------------- */}
-                            <div className="bg-white p-6 shadow-md">
+                            <div className="bg-white p-4 md:p-6 shadow-md">
                                 <div className="flex gap-2 items-center mb-4">
                                     <MapPin />
-                                    <h3 className="text-2xl font-semibold text-slate-700">Location</h3>
+                                    <h3 className="text-xl md:text-2xl font-semibold text-slate-700">Location</h3>
                                 </div>
                                 <FieldGroup>
                                     <Controller name="eventVenue" control={form.control} render={({ field, fieldState }) => (
@@ -293,21 +293,21 @@ const EventDetail = () => {
                             </div>
 
                             {/* ------------------  TICKETS --------------- */}
-                            <div className="bg-white p-6 shadow-md">
-                                <div className="flex items-center justify-between">
+                            <div className="bg-white p-4 md:p-6 shadow-md">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                     <div className="flex gap-2 items-center mb-4">
                                         <Ticket />
-                                        <h3 className="text-2xl font-semibold text-slate-700">Tickets</h3>
+                                        <h3 className="text-xl md:text-2xl font-semibold text-slate-700">Tickets</h3>
                                     </div>
                                     <div>
-                                        <Button type="button" onClick={handleAddTicketType}>+ Add Ticket Type</Button>
+                                        <Button type="button" onClick={handleAddTicketType} className="w-full sm:w-auto">+ Add Ticket Type</Button>
                                     </div>
                                 </div>
 
 
                                 {ticketTypeList.length > 0 ? ticketTypeList.map((ticket, index) => (
-                                    <div key={index} className="bg-slate-200/30 p-4 grid grid-cols-8 gap-2 border mb-6">
-                                        <div className="col-span-5">
+                                    <div key={index} className="bg-slate-200/30 p-4 grid grid-cols-1 md:grid-cols-8 gap-2 border mb-6">
+                                        <div className="col-span-1 md:col-span-5">
                                             <Field>
                                                 <FieldLabel>Ticket Name</FieldLabel>
                                                 <Input
@@ -322,7 +322,7 @@ const EventDetail = () => {
                                                 />
                                             </Field>
                                         </div>
-                                        <div className="col-span-2">
+                                        <div className="col-span-1 md:col-span-2">
                                             <Field>
                                                 <FieldLabel>Price</FieldLabel>
                                                 <Input
@@ -364,9 +364,9 @@ const EventDetail = () => {
                             </div>
                         </div>
 
-                        <div className="w-[30%] space-y-6">
+                        <div className="w-full lg:w-[30%] space-y-6">
                             {/* ------------------ PUBLICATION STATUS --------------- */}
-                            <div className="bg-white p-6 shadow-md">
+                            <div className="bg-white p-4 md:p-6 shadow-md">
                                 <div className="flex justify-between pb-4">
                                     <span className="font-semibold">Publication Status</span>
                                     <Badge variant="outline">Pending</Badge>
@@ -376,10 +376,10 @@ const EventDetail = () => {
                             </div>
 
                             {/* ------------------ DATE AND TIME --------------- */}
-                            <div className="bg-white p-6 shadow-md">
+                            <div className="bg-white p-4 md:p-6 shadow-md">
                                 <div className="flex gap-2 items-center mb-4">
                                     <Clock />
-                                    <h3 className="text-2xl font-semibold text-slate-700">Date & Time</h3>
+                                    <h3 className="text-xl md:text-2xl font-semibold text-slate-700">Date & Time</h3>
                                 </div>
                                 <FieldGroup>
                                     <div className="flex gap-2">
@@ -508,10 +508,10 @@ const EventDetail = () => {
                             </div>
 
                             {/* ------------------ EVENT FLYER --------------- */}
-                            <div className="bg-white p-6 shadow-md">
+                            <div className="bg-white p-4 md:p-6 shadow-md">
                                 <div className="flex gap-2 items-center mb-4">
                                     <Upload />
-                                    <h3 className="text-2xl font-semibold text-slate-700">Event Flyer</h3>
+                                    <h3 className="text-xl md:text-2xl font-semibold text-slate-700">Event Flyer</h3>
                                 </div>
                                 <div className="relative w-full h-[200px] overflow-hidden rounded-[5px] bg-slate-100">
                                     {imagePreview || eventDetail?.eventImage ? (

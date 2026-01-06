@@ -71,11 +71,20 @@ export const AuthProvider = ({ children }) => {
 
     const updateUser = async (userId, userData) => {
         try {
-            const response = await api.put(`/users/${userId}`, userData);
+            // Determine if we're sending FormData (for file uploads) or JSON
+            const isFormData = userData instanceof FormData;
+
+            const response = await api.put(`/users/${userId}`, userData, {
+                headers: isFormData ? {
+                    'Content-Type': 'multipart/form-data'
+                } : {}
+            });
+
             const updatedUser = {
                 ...user,
                 fullName: response.data.user.fullName,
-                email: response.data.user.email
+                email: response.data.user.email,
+                profileImage: response.data.user.profileImage
             };
             setUser(updatedUser);
             localStorage.setItem('user', JSON.stringify(updatedUser));

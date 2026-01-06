@@ -62,7 +62,7 @@ const Login = () => {
 
     return (
         <div className="bg-secondary">
-            <div className="max-w-xl mx-auto min-h-screen flex items-start flex-col justify-center">
+            <div className="max-w-xl mx-auto min-h-screen flex items-start flex-col justify-center px-4 md:px-6">
                 <div className="mb-2">
                     <Button
                         variant="ghost"
@@ -75,9 +75,9 @@ const Login = () => {
                 </div>
 
                 <div className="w-full flex items-center overflow-hidden rounded-xl drop-shadow-2xl bg-white">
-                    <div className="w-full space-y-8 p-12">
+                    <div className="w-full space-y-8 p-6 md:p-12">
                         <div className="flex flex-col">
-                            <span className="text-2xl font-semibold">Welcome Back!</span>
+                            <span className="text-xl md:text-2xl font-semibold">Welcome Back!</span>
                             <span className="text-sm">Login to your account</span>
                         </div>
 

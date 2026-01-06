@@ -72,15 +72,15 @@ const LitingPage = () => {
     return (
         <div className="bg-secondary pt-14 pb-16">
             {userEvents && userEvents.length > 0 ? (
-                <div className="max-w-7xl mx-auto">
-                    <div className="p-6 bg-white shadow">
-                        <div className="flex justify-between items-center mb-2">
+                <div className="max-w-7xl mx-auto px-4 md:px-6">
+                    <div className="p-4 md:p-6 bg-white shadow">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
                             <div>
-                                <h3 className="text-3xl font-bold">My Listings</h3>
+                                <h3 className="text-2xl md:text-3xl font-bold">My Listings</h3>
                                 <p className="text-slate-600 mt-1 text-sm">Manage and track all your event listings in one place</p>
                             </div>
                             <Link href="/create">
-                                <Button size="lg">Create New Event</Button>
+                                <Button size="lg" className="w-full sm:w-auto">Create New Event</Button>
                             </Link>
                         </div>
                     </div>
@@ -167,12 +167,12 @@ const LitingPage = () => {
                     </div>
                 </div>
             ) : (
-                <div className="p-16 mt-4 flex flex-col items-center justify-center">
+                <div className="p-16 mt-4 flex flex-col items-center justify-center px-4">
                     <div className="text-center">
-                        <h3 className="text-2xl font-semibold text-primary/80 mb-2">
+                        <h3 className="text-xl md:text-2xl font-semibold text-slate-600 mb-2">
                             No Events Yet
                         </h3>
-                        <p className="text-primary/60 mb-6">
+                        <p className="text-slate-600 mb-6">
                             You haven't created any events. Start by creating your first
                             event!
                         </p>

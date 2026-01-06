@@ -88,16 +88,16 @@ const BookingPage = () => {
 
     return (
         <div className='bg-secondary pt-14 pb-16'>
-            <div className="max-w-7xl mx-auto">
-                <div className="p-6 bg-white shadow">
+            <div className="max-w-7xl mx-auto px-4 md:px-6">
+                <div className="p-4 md:p-6 bg-white shadow">
                     <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
                         <div>
-                            <h3 className='text-3xl font-bold'>My Bookings</h3>
+                            <h3 className='text-2xl md:text-3xl font-bold'>My Bookings</h3>
                             <p className="text-sm text-slate-600 mt-1">
                                 View and manage all your event bookings
                             </p>
                         </div>
-                        <div className="w-full md:w-auto flex gap-2">
+                        <div className="w-full md:w-auto flex flex-col sm:flex-row gap-2">
                             <div className="flex-1 md:w-[300px] flex items-center border rounded-md pl-2 bg-white">
                                 <Search size={20} className='text-primary/30' />
                                 <Input
@@ -109,7 +109,7 @@ const BookingPage = () => {
                             </div>
 
                             <NativeSelect
-                                className="w-[150px]"
+                                className="w-full sm:w-[150px]"
                                 value={filterStatus}
                                 onChange={(e) => setFilterStatus(e.target.value)}
                             >

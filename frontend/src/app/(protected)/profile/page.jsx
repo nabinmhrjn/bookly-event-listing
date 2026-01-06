@@ -34,7 +34,10 @@ const formSchema = z.object({
 const UserProfilePage = () => {
     const { user, updateUser } = useAuth();
     const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [uploadingImage, setUploadingImage] = useState(false);
 
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -68,6 +71,63 @@ const UserProfilePage = () => {
         })
         : "";
 
+    const handleImageSelect = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file type
+        const validTypes = ['image/jpeg', 'image/png'];
+        if (!validTypes.includes(file.type)) {
+            toast.error('Please select a JPG or PNG image');
+            return;
+        }
+
+        // Validate file size (4MB)
+        const maxSize = 4 * 1024 * 1024;
+        if (file.size > maxSize) {
+            toast.error('Image size must be less than 4MB');
+            return;
+        }
+
+        setSelectedImage(file);
+
+        // Create preview
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleImageUpload = async () => {
+        if (!selectedImage) return;
+
+        setUploadingImage(true);
+        try {
+            const formData = new FormData();
+            formData.append('profileImage', selectedImage);
+            formData.append('fullName', userData.fullName);
+            formData.append('email', userData.email);
+
+            const response = await updateUser(user._id, formData);
+            setUserData(response.user);
+            setSelectedImage(null);
+            setImagePreview(null);
+            toast.success('Profile image updated successfully!');
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            const errorMessage = error.response?.data?.message || 'Failed to upload image. Please try again.';
+            toast.error(errorMessage);
+        } finally {
+            setUploadingImage(false);
+        }
+    };
+
+    const handleCancelImageUpload = () => {
+        setSelectedImage(null);
+        setImagePreview(null);
+    };
+
     const onSubmit = async (values) => {
         setLoading(true)
         try {
@@ -87,23 +147,23 @@ const UserProfilePage = () => {
         }
     }
     return (
-        <div className="bg-secondary pt-14 pb-16">
-            <div className="max-w-4xl mx-auto">
-                <div className="p-4 flex justify-between items-center bg-white">
-                    <div className="flex gap-4 items-center">
-                        <div className="w-20 h-20 rounded-full relative overflow-hidden">
+        <div className="bg-secondary pt-8 sm:pt-14 pb-12 sm:pb-16">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 bg-white rounded-lg">
+                    <div className="flex gap-3 sm:gap-4 items-center">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full relative overflow-hidden bg-gray-200 shrink-0">
                             <Image
-                                src="/test.jpeg"
+                                src={user.profileImage || "/default-avatar.png"}
                                 loading="eager"
                                 width={500}
                                 height={500}
-                                alt="Picture of the author"
+                                alt="Profile picture"
                                 className="absolute w-full h-full object-cover"
                             />
                         </div>
                         <div className="">
-                            <p className="text-lg font-bold">{userData?.fullName}</p>
-                            <p className="text-xs text-primary/60">
+                            <p className="text-base sm:text-lg font-bold">{userData?.fullName}</p>
+                            <p className="text-xs text-slate-600">
                                 Joined <span>{formattedDate}</span>
                             </p>
                         </div>
@@ -111,40 +171,76 @@ const UserProfilePage = () => {
                 </div>
             </div>
 
-            <div className="max-w-4xl mx-auto mt-8">
-                <div className="p-4 bg-white">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8">
+                <div className="p-4 sm:p-6 bg-white rounded-lg">
                     <div className="">
-                        <p className="tet-lg font-bold">Personal Details</p>
-                        <p className="text-xs text-primary/40">
+                        <p className="text-base sm:text-lg font-bold">Personal Details</p>
+                        <p className="text-xs sm:text-sm text-slate-600 mt-1">
                             Update your profile photo and personal details
                         </p>
                     </div>
-                    <div className="flex gap-4 items-center mt-8">
-                        <div className="w-14 h-14 rounded-full relative overflow-hidden">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start sm:items-center mt-6 sm:mt-8">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full relative overflow-hidden bg-gray-200 shrink-0">
                             <Image
-                                src="/test.jpeg"
+                                src={imagePreview || user.profileImage || "/default-avatar.png"}
                                 loading="eager"
                                 width={500}
                                 height={500}
-                                alt="Picture of the author"
+                                alt="Profile picture"
                                 className="absolute w-full h-full object-cover"
                             />
                         </div>
-                        <Button>Upload New</Button>
-                        <Button>Delete</Button>
+
+                        {selectedImage ? (
+                            <div className="flex gap-2">
+                                <Button
+                                    type="button"
+                                    onClick={handleImageUpload}
+                                    disabled={uploadingImage}
+                                    size="sm"
+                                >
+                                    {uploadingImage ? "Uploading..." : "Upload"}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={handleCancelImageUpload}
+                                    disabled={uploadingImage}
+                                    size="sm"
+                                >
+                                    Cancel
+                                </Button>
+                            </div>
+                        ) : (
+                            <>
+                                <input
+                                    type="file"
+                                    id="profileImageInput"
+                                    accept="image/jpeg,image/png"
+                                    onChange={handleImageSelect}
+                                    className="hidden"
+                                />
+                                <Button
+                                    type="button"
+                                    onClick={() => document.getElementById('profileImageInput').click()}
+                                    size="sm"
+                                >
+                                    Upload New
+                                </Button>
+                            </>
+                        )}
                     </div>
 
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                            <div className="w-full flex items-center gap-4 mt-8">
-                                <div className="w-1/2">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 sm:space-y-8">
+                            <div className="w-full flex flex-col sm:flex-row items-start gap-4 mt-6 sm:mt-8">
+                                <div className="w-full sm:w-1/2">
                                     <FormField
-                                        className="w-1/2"
                                         control={form.control}
                                         name="fullName"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>FullName</FormLabel>
+                                                <FormLabel>Full Name</FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         placeholder="Enter your full name"
@@ -156,9 +252,8 @@ const UserProfilePage = () => {
                                         )}
                                     />
                                 </div>
-                                <div className="w-1/2">
+                                <div className="w-full sm:w-1/2">
                                     <FormField
-                                        className="w-1/2"
                                         control={form.control}
                                         name="email"
                                         render={({ field }) => (
