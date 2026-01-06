@@ -1,6 +1,7 @@
 import express from "express";
 import { signup, login, logout, getUserById, updateUser, forgotPassword, resetPassword } from "../controllers/usersControllers.js";
 import { validateToken } from "../middleware/validateToken.js";
+import { profileImageUpload } from "../middleware/profileImageUpload.js";
 
 const router = express.Router();
 
@@ -14,6 +15,6 @@ router.post("/reset-password", resetPassword);
 //private routes
 router.use(validateToken)
 router.get("/:id", getUserById);
-router.put("/:id", updateUser)
+router.put("/:id", profileImageUpload, updateUser);
 
 export default router;

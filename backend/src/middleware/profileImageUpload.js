@@ -2,7 +2,7 @@ import multer from "multer";
 import fs from "fs";
 
 // Ensure upload directory exists
-const uploadDir = "uploads/eventImage";
+const uploadDir = "uploads/profileImage";
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -27,7 +27,7 @@ const fileFilter = (req, file, cb) => {
         cb(
             new multer.MulterError(
                 "LIMIT_FILE_TYPE",
-                "Invalid file type. Only JPG, PNG, and PDF files are allowed."
+                "Invalid file type. Only JPG and PNG files are allowed."
             ),
             false
         );
@@ -42,8 +42,8 @@ const upload = multer({
     fileFilter: fileFilter,
 });
 
-export const eventImageUpload = (req, res, next) => {
-    upload.single("eventImage")(req, res, (err) => {
+export const profileImageUpload = (req, res, next) => {
+    upload.single("profileImage")(req, res, (err) => {
         if (err instanceof multer.MulterError) {
             let errorMessage = "Error processing file upload";
 
@@ -53,7 +53,7 @@ export const eventImageUpload = (req, res, next) => {
                 errorMessage = "Too many files uploaded or invalid field name";
             } else if (err.code === "LIMIT_FILE_TYPE") {
                 errorMessage =
-                    "Invalid file type. Only JPG, PNG, and PDF files are allowed";
+                    "Invalid file type. Only JPG and PNG files are allowed";
             }
 
             return res.status(400).json({

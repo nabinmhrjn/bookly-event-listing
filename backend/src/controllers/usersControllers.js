@@ -2,6 +2,8 @@ import generateToken from "../utils/generateToken.js";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import cloudinary from "../config/cloudinary.js";
+import fs from "fs";
 
 export const signup = async (req, res) => {
     try {
@@ -37,6 +39,7 @@ export const signup = async (req, res) => {
                 _id: newUser._id,
                 fullName: newUser.fullName,
                 email: newUser.email,
+                profileImage: newUser.profileImage,
                 createdAt: newUser.createdAt
             }
         });
@@ -80,7 +83,8 @@ export const login = async (req, res) => {
                 user: {
                     _id: user._id,
                     fullName: user.fullName,
-                    email: user.email
+                    email: user.email,
+                    profileImage: user.profileImage
                 }
             })
         } else {
@@ -121,12 +125,50 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
     try {
         const { fullName, email } = req.body;
-        const updatedUser = await User.findByIdAndUpdate(req.params.id,
-            { fullName, email },
+
+        // Prepare update object
+        const updateData = { fullName, email };
+
+        // Handle profile image upload if file is present
+        if (req.file) {
+            try {
+                // Upload the file to Cloudinary
+                const uploadResponse = await cloudinary.uploader.upload(req.file.path, {
+                    folder: "bookly-profiles",
+                    resource_type: "image",
+                    allowed_formats: ['jpg', 'jpeg', 'png'],
+                    transformation: [
+                        { width: 400, height: 400, crop: 'fill', gravity: 'face' },
+                        { quality: 'auto' }
+                    ]
+                });
+                updateData.profileImage = uploadResponse.secure_url;
+
+                // Delete the temporary file after successful upload
+                fs.unlinkSync(req.file.path);
+            } catch (uploadError) {
+                console.error("Cloudinary upload error:", uploadError);
+
+                // Clean up the temporary file even if upload fails
+                if (req.file && fs.existsSync(req.file.path)) {
+                    fs.unlinkSync(req.file.path);
+                }
+
+                return res.status(400).json({
+                    message: "Failed to upload profile image. Please ensure it's a valid image file."
+                });
+            }
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            updateData,
             { new: true }
-        );
+        ).select('-password');
+
         if (!updatedUser)
             return res.status(404).json({ message: "User not found" });
+
         res.status(200).json({
             message: "User profile updated successfully 🎊",
             user: updatedUser,
