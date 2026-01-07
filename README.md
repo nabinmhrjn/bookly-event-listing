@@ -1,32 +1,30 @@
-<div align="left">
+# 🎫 Bookly - Event Booking Platform
 
-# 🚧 Bookly - Event Management Platform
+A modern, full-stack event booking platform built with Next.js and Express. Bookly allows users to discover events, book tickets, and manage their bookings seamlessly.
 
-### 🎟️ Under Active Development
-
-![Status](https://img.shields.io/badge/Status-Under_Construction-yellow?style=for-the-badge)
-![Next.js](https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js)
-![React](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react)
-![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?style=for-the-badge&logo=mongodb)
-
-**A modern full-stack event discovery and booking platform**
-
-</div>
+🌐 **Live Demo:** [https://bookly-event-listing.vercel.app](https://bookly-event-listing.vercel.app)
 
 ---
 
-## 📋 Project Overview
+## ✨ Features
 
-Bookly is a comprehensive event management platform that enables users to discover, create, and manage events. Built with cutting-edge web technologies, it provides a seamless experience for both event organizers and attendees.
+### For Users
 
-### 🎯 Core Features (Planned)
+- 🔍 **Browse Events** - Discover upcoming events with advanced filtering by category and date
+- 🎟️ **Book Tickets** - Select ticket types and quantities with real-time pricing
+- 👤 **User Authentication** - Secure signup/login with JWT authentication
+- 📱 **Responsive Design** - Optimized for desktop, tablet, and mobile devices
+- 💳 **Multiple Payment Options** - Support for eSewa, ConnectIPS, and Visa
+- 📋 **Booking Management** - View and manage your event bookings
+- 🔐 **Password Reset** - Secure password recovery via email
 
-- Event discovery with advanced filtering
-- User authentication and authorization
-- Event creation and management
-- User profiles and event tracking
-- Responsive, modern UI/UX
-- Real-time updates and notifications
+### For Event Organizers
+
+- ➕ **Create Events** - Rich text editor for event descriptions
+- 🖼️ **Image Upload** - Cloudinary integration for event images
+- 🎫 **Dynamic Ticket Types** - Create multiple ticket tiers with different pricing
+- ✏️ **Edit Events** - Update event details and ticket information
+- 📊 **Booking Overview** - Track bookings for your events
 
 ---
 
@@ -34,164 +32,243 @@ Bookly is a comprehensive event management platform that enables users to discov
 
 ### Frontend
 
-- **Framework:** Next.js 16.0 (App Router)
-- **UI Library:** React 19.2
-- **Styling:** Tailwind CSS 4.0
-- **Components:** Radix UI, Shadcn/ui
-- **Form Management:** React Hook Form + Zod
-- **State Management:** React Context API
+- **Framework:** Next.js 16 (React 19)
+- **Styling:** Tailwind CSS 4
+- **UI Components:** Radix UI, shadcn/ui
+- **Form Handling:** React Hook Form + Zod
+- **HTTP Client:** Axios
+- **Notifications:** Sonner
 
 ### Backend
 
 - **Runtime:** Node.js
 - **Framework:** Express.js
 - **Database:** MongoDB with Mongoose
-- **Authentication:** JWT (JSON Web Tokens)
+- **Authentication:** JWT + httpOnly cookies
+- **File Upload:** Multer + Cloudinary
 - **Security:** bcryptjs, CORS
 
 ---
 
-## 📦 Build Plan & Progress
+## 📁 Project Structure
 
-### Phase 1: Foundation ✅
-
-- [x] Project setup and structure
-- [x] Database schema design
-- [x] Basic routing configuration
-- [x] Development environment setup
-
-### Phase 2: Authentication & User Management 🔄
-
-- [x] User registration (signup)
-- [x] User login with JWT
-- [x] User logout functionality
-- [x] Protected routes implementation
-- [x] User profile page
-- [x] User profile update functionality
-- [ ] Password reset functionality
-- [ ] Email verification
-- [ ] Profile picture upload
-
-### Phase 3: Event Management 🔄
-
-- [x] Event model and schema
-- [x] Create event (authenticated users)
-- [x] Get all events with pagination
-- [x] Get event by ID
-- [x] Get events by organizer
-- [x] Update event
-- [x] Delete event
-- [x] Event filtering (category, date)
-- [x] Event listing by user functionality
-- [x] Show listed event of user in UI
-- [ ] Event image upload
-- [ ] Event capacity management
-- [ ] Event status (draft, published, cancelled)
-
-### Phase 4: Booking System 📅
-
-- [ ] Booking model and schema
-- [ ] Create booking
-- [ ] View user bookings
-- [ ] Cancel booking
-- [ ] Booking confirmation emails
-- [ ] Ticket generation
-- [ ] QR code for tickets
-- [ ] Check-in system
-
-### Phase 5: UI/UX Enhancement 🎨
-
-- [ ] Responsive design
-- [ ] Modern component library (Radix UI)
-- [x] Form validation
-- [x] Toast notifications
-- [ ] Loading states and skeletons
-- [ ] Error boundaries
-- [ ] Animations and transitions
-- [x] Dark mode support
-- [ ] Accessibility improvements
-
-### Phase 6: Advanced Features 🚀
-
-- [ ] Event recommendations
-- [ ] User reviews and ratings
-- [ ] Event categories and tags
-- [ ] Social sharing
-- [ ] Calendar integration
-- [ ] Email notifications
-- [ ] Push notifications
-- [ ] Analytics dashboard
+```
+bookly/
+├── frontend/                 # Next.js frontend application
+│   ├── src/
+│   │   ├── app/             # App router pages
+│   │   ├── components/      # Reusable components
+│   │   ├── context/         # React context (Auth)
+│   │   └── lib/             # Utilities (axios config)
+│   └── package.json
+│
+└── backend/                 # Express.js backend API
+    ├── src/
+    │   ├── config/          # Database & Cloudinary config
+    │   ├── controllers/     # Route controllers
+    │   ├── middleware/      # Auth & upload middleware
+    │   ├── models/          # Mongoose models
+    │   ├── routes/          # API routes
+    │   ├── utils/           # Helper functions
+    │   └── server.js        # Entry point
+    └── package.json
+```
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js (v18+)
-- MongoDB (right now its running locally)
-- npm or yarn
+- Node.js 18+ and npm
+- MongoDB database
+- Cloudinary account (for image uploads)
 
 ### Installation
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/bookly.git
-cd bookly
+1. **Clone the repository**
 
-# Backend setup
-cd backend
-npm install
-# Create .env file with your configuration
-npm run dev
+   ```bash
+   git clone https://github.com/nabinmhrjn/bookly-event-listing.git
+   cd bookly-event-listing
+   ```
 
-# Frontend setup (in a new terminal)
-cd frontend
-npm install
-npm run dev
-```
+2. **Setup Backend**
 
-### Environment Variables
+   ```bash
+   cd backend
+   npm install
+   ```
 
-**Backend (.env)**
+   Create `.env` file:
 
-```env
-MONGODB_URI=mongodb://localhost:27017/bookly
-PORT=8080
-JWT_SECRET=your_secret_key
-```
+   ```env
+   PORT=8080
+   MONGODB_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   FRONTEND_URL=http://localhost:3000
 
-**Frontend (.env.local)**
+   # Cloudinary Configuration
+   CLOUDINARY_CLOUD_NAME=your_cloud_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   ```
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
-```
+   Start the backend:
+
+   ```bash
+   npm run dev
+   ```
+
+3. **Setup Frontend**
+
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+   Create `.env.local` file:
+
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8080/api
+   ```
+
+   Start the frontend:
+
+   ```bash
+   npm run dev
+   ```
+
+4. **Access the application**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:8080
 
 ---
 
-## 🎯 Upcoming Features
+## 🔑 API Endpoints
 
-- 🔔 Real-time notifications
-- 📧 Email integration
-- 💳 Payment gateway integration
-- 📱 Mobile app (React Native)
-- 🌍 Multi-language support
-- 📊 Analytics and insights
+### Authentication
+
+- `POST /api/users/signup` - Register new user
+- `POST /api/users/login` - Login user
+- `POST /api/users/logout` - Logout user
+- `POST /api/users/forgot-password` - Request password reset
+- `POST /api/users/reset-password` - Reset password
+
+### Events
+
+- `GET /api/events` - Get all events (with pagination & filters)
+- `GET /api/events/:id` - Get event by ID
+- `POST /api/events` - Create new event (auth required)
+- `PUT /api/events/:id` - Update event (auth required)
+- `DELETE /api/events/:id` - Delete event (auth required)
+
+### Bookings
+
+- `GET /api/bookings` - Get user's bookings (auth required)
+- `GET /api/bookings/:id` - Get booking by ID (auth required)
+- `POST /api/bookings` - Create new booking (auth required)
+- `PUT /api/bookings/:id/cancel` - Cancel booking (auth required)
+
+### Users
+
+- `GET /api/users/:id` - Get user profile
+- `PUT /api/users/:id` - Update user profile (auth required)
+
+---
+
+## 🌐 Deployment
+
+### Frontend (Vercel)
+
+1. Push code to GitHub
+2. Import project in Vercel
+3. Add environment variables:
+   - `NEXT_PUBLIC_API_URL=https://your-backend-url.com/api`
+4. Deploy
+
+### Backend (Render)
+
+1. Push code to GitHub
+2. Create new Web Service in Render
+3. Add environment variables (same as `.env`)
+4. Deploy
+
+---
+
+## 🔒 Security Features
+
+- JWT authentication with httpOnly cookies
+- Password hashing with bcryptjs
+- CORS configuration for cross-origin requests
+- Input validation with Zod
+- Secure file upload with Cloudinary
+- Protected API routes with authentication middleware
+
+---
+
+## 📸 Screenshots
+
+### Homepage
+
+![Homepage](screenshots/homepage.png)
+
+### Events Listing
+
+![Events Listing](screenshots/event-listing.png)
+
+### Event Detail
+
+![Event Detail](screenshots/event-detail.png)
+
+### Checkout
+
+![Checkout](screenshots/checkout.png)
+
+### Login
+
+![Checkout](screenshots/login.png)
+
+### Profile
+
+![Checkout](screenshots/profile.png)
 
 ---
 
 ## 🤝 Contributing
 
-This project is currently under active development. Contributions, issues, and feature requests are welcome!
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
-<div align="left">
+## 📝 License
 
-### 🚧 This project is actively being built. Check back for updates! 🚧
+This project is open source and available under the [MIT License](LICENSE).
 
-![Under Construction](https://img.shields.io/badge/🚧-Under_Construction-yellow?style=for-the-badge)
+---
 
-**Last Updated:** December 2025
+## 👨‍💻 Author
 
-</div>
+**Nabin Maharjan**
+
+- GitHub: [@nabinmhrjn](https://github.com/nabinmhrjn)
+
+---
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org/) - React framework
+- [Tailwind CSS](https://tailwindcss.com/) - CSS framework
+- [Radix UI](https://www.radix-ui.com/) - UI components
+- [Cloudinary](https://cloudinary.com/) - Image hosting
+- [MongoDB](https://www.mongodb.com/) - Database
+
+---
+
+**Made with ❤️ by Nabin Maharjan**
