@@ -38,7 +38,7 @@ const Navbar = () => {
 
                 {/* LOGO */}
                 <Link href="/" className="flex items-center gap-2 cursor-pointer">
-                    <div className='w-8 h-8 bg-primary flex items-center justify-center'>
+                    <div className='w-8 h-8 bg-primary flex items-center justify-center rounded-full'>
                         <Ticket className='text-white font-semibold' size={20} />
                     </div>
                     <h3 className='text-xl font-semibold'>Bookly</h3>
@@ -115,16 +115,19 @@ const Navbar = () => {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     ) : (
-                        <Link className={buttonVariants()} href="/login">Log In</Link>
+                        <>
+                            <Link className={buttonVariants(({ variant: 'outline' }))} href="/login">Log In</Link>
+                            <Link className={buttonVariants()} href="/signup">Sign Up</Link>
+                        </>
                     )
                     }
                 </div>
 
                 {/* MOBILE MENU BUTTON & AUTH */}
                 <div className="flex md:hidden items-center gap-2">
-                    <div className="mr-2">
+                    {/* <div className="mr-2">
                         <ModeToggle />
-                    </div>
+                    </div> */}
                     {loading ? (
                         <div className="h-10 w-10 rounded-full bg-gray-100 animate-pulse" />
                     ) : user ? (

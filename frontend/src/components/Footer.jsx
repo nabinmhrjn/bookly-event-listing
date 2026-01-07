@@ -1,5 +1,5 @@
 import React from 'react'
-import { Globe, Mail, Ticket } from 'lucide-react'
+import { GithubIcon, Globe, Linkedin, Mail, Ticket } from 'lucide-react'
 import { Button } from './ui/button'
 
 const Footer = () => {
@@ -11,7 +11,7 @@ const Footer = () => {
                     {/* Brand Section */}
                     <div>
                         <div className='flex items-center gap-2 mb-4'>
-                            <div className='w-8 h-8 bg-primary rounded flex items-center justify-center'>
+                            <div className='w-8 h-8 bg-primary rounded-full flex items-center justify-center'>
                                 <Ticket className='text-white font-semibold' size={20} />
                             </div>
                             <span className='text-xl font-bold'>Bookly</span>
@@ -99,14 +99,14 @@ const Footer = () => {
                 {/* Bottom Bar */}
                 <div className='pt-8 flex border-t flex-col md:flex-row justify-between items-center gap-4'>
                     <p className='text-gray-400 text-sm'>
-                        © 2026 Bookly Inc. All rights reserved.
+                        © 2026 Bookly. Designed and developed by Nabin Maharjan
                     </p>
                     <div className='flex gap-4'>
-                        <a href='#' className='text-gray-400 hover:text-blue-600 transition-colors'>
-                            <Globe className='w-5 h-5' />
+                        <a href='#' className='text-gray-400 hover:text-primary transition-colors'>
+                            <GithubIcon className='w-5 h-5' />
                         </a>
-                        <a href='#' className='text-gray-400 hover:text-blue-600 transition-colors'>
-                            <Mail className='w-5 h-5' />
+                        <a href='#' className='text-gray-400 hover:text-primary transition-colors'>
+                            <Linkedin className='w-5 h-5' />
                         </a>
                     </div>
                 </div>

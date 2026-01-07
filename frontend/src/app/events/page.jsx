@@ -236,7 +236,7 @@ const EventPage = () => {
                 <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
 
                     {/* LEFT SECTION - FILTERS */}
-                    <div className={`${showFilters ? 'block' : 'hidden'} lg:block lg:w-64 lg:shrink-0`}>
+                    <div className={`${showFilters ? 'block' : 'hidden'} lg:block lg:w-[210px] lg:shrink-0`}>
                         <FilterSection />
                     </div>
 

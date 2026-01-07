@@ -181,7 +181,7 @@ const EventDetail = () => {
                 <div className="flex items-center justify-between pb-4">
                     <div className="flex flex-col">
                         <span className="text-2xl md:text-3xl font-semibold">Edit Event</span>
-                        <span className="text-sm text-slate-700">Update the details for {eventDetail.eventName} </span>
+                        <span className="text-sm text-slate-700">Update the details for {eventDetail?.eventName} </span>
                     </div>
 
                 </div>
