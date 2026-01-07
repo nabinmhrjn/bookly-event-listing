@@ -10,12 +10,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import api from "@/lib/axios";
 import { ChevronDownIcon, Filter, LoaderIcon, X } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
 import { Toggle } from "@/components/ui/toggle"
 
-const EventPage = () => {
+const EventsContent = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get('page')) || 1;
@@ -300,6 +300,18 @@ const EventPage = () => {
                 </div>
             </div>
         </div>
+    );
+};
+
+const EventPage = () => {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-secondary flex items-center justify-center">
+                <LoaderIcon className="animate-spin size-10" />
+            </div>
+        }>
+            <EventsContent />
+        </Suspense>
     );
 };
 

@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react'
 import { MapPin } from 'lucide-react'
-import { Button } from './ui/button'
 import EventCard from './EventCard'
 import Link from 'next/link'
 import api from '@/lib/axios'
@@ -25,7 +24,12 @@ const FeaturedEvents = () => {
                 {/* Header */}
                 <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-6 sm:mb-8'>
                     <h2 className='text-xl sm:text-2xl lg:text-3xl font-semibold text-slate-800'>Recommended Events</h2>
-                    <Button variant={'secondary'} className="text-sm text-slate-500 hover:text-slate-800 cursor-pointer w-fit">See all</Button>
+                    <Link
+                        href="/events"
+                        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-secondary hover:bg-secondary/80 h-10 px-4 py-2 text-slate-500 hover:text-slate-800 cursor-pointer w-fit"
+                    >
+                        See all
+                    </Link>
                 </div>
 
                 {/* Events Grid */}
