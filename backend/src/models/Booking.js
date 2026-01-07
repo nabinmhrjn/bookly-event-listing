@@ -87,7 +87,6 @@ bookingSchema.pre('save', async function () {
 
 // index for faster queries
 bookingSchema.index({ userId: 1, eventId: 1 });
-bookingSchema.index({ bookingReference: 1 });
 bookingSchema.index({ email: 1 });
 
 const Booking = mongoose.model('Booking', bookingSchema);
