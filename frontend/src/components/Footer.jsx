@@ -102,10 +102,10 @@ const Footer = () => {
                         © 2026 Bookly. Designed and developed by Nabin Maharjan
                     </p>
                     <div className='flex gap-4'>
-                        <a href='#' className='text-gray-400 hover:text-primary transition-colors'>
+                        <a href='https://github.com/nabinmhrjn' className='text-gray-400 hover:text-primary transition-colors'>
                             <GithubIcon className='w-5 h-5' />
                         </a>
-                        <a href='#' className='text-gray-400 hover:text-primary transition-colors'>
+                        <a href='https://www.linkedin.com/in/being-nabin/' className='text-gray-400 hover:text-primary transition-colors'>
                             <Linkedin className='w-5 h-5' />
                         </a>
                     </div>
