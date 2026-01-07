@@ -21,17 +21,17 @@ export default function RootLayout({ children }) {
             <body
                 className={`${outfit.className} antialiased`}
             >
-                <ThemeProvider
+                {/* <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
                     enableSystem
                     disableTransitionOnChange
-                >
-                    <AuthProvider>
-                        <ConditionalLayout>{children}</ConditionalLayout>
-                        <Toaster richColors position="bottom-right" />
-                    </AuthProvider>
-                </ThemeProvider>
+                > */}
+                <AuthProvider>
+                    <ConditionalLayout>{children}</ConditionalLayout>
+                    <Toaster richColors position="bottom-right" />
+                </AuthProvider>
+                {/* </ThemeProvider> */}
             </body>
         </html>
     );
